@@ -26,7 +26,10 @@ socket.on('broadcast', function(msg) {
 	//视频连接
 	var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 	getUserMedia = getUserMedia.bind(navigator);
-	getUserMedia({video: true,audio: true}, function(stream) {
+	getUserMedia({
+		video: true,
+		audio: true
+	}, function(stream) {
 		var call = peer.call(msg.content, stream);
 		call.on('stream', function(remoteStream) {
 			// Show stream in some video/canvas element.
@@ -78,7 +81,10 @@ peer.on('connection', function(connection) {
 peer.on('call', function(call) {
 	var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 	getUserMedia = getUserMedia.bind(navigator);
-	getUserMedia({video: true,audio: true}, function(stream) {
+	getUserMedia({
+		video: true,
+		audio: true
+	}, function(stream) {
 		call.answer(stream); // Answer the call with an A/V stream.
 		call.on('stream', function(remoteStream) {
 			// Show stream in some video/canvas element.
@@ -88,3 +94,23 @@ peer.on('call', function(call) {
 		console.log('Failed to get local stream', err);
 	});
 });
+
+var chatList = new Vue({
+	el: '#chat-list',
+	data: {
+		todos: [{
+			text: 'test0'
+		}, {
+			text: 'test1'
+		}]
+	},
+	methods: {
+		addPerson: function() {
+			this.todos.push({
+				text: 'test2'
+			});
+		}
+	}
+});
+
+chatList.addPerson();

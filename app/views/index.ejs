@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title><%= title %></title>
+</head>
+<body>
+	<div id="chat-list">
+		<ul v-for="todo in todos">
+			<li>{{ todo.text }}</li>
+		</ul>
+	</div>
+	<video src="" autoplay="" id="camera_box"></video>
+	<script type="text/javascript" src="/libs/peer.js"></script>
+	<script type="text/javascript" src="/libs/socket.io-1.2.0.js"></script>
+	<script type="text/javascript" src="/libs/vue.js"></script>
+	<script type="text/javascript" src="/javascripts/index.js"></script>
+</body>
+</html>

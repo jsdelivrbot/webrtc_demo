@@ -7,8 +7,8 @@
 <body>
 	<div id="chat-list">
 		<ul v-for="user in users">
-			<li v-on:click="requestVideo" id="{{ user.id }}">
-				<video src="" autoplay="" id="camera_box"></video>
+			<li v-on:click="requestVideo($event)" id="{{ user.id }}">
+				<video src="{{ user.videoStream}}" autoplay="" id="camera_box"></video>
 				<a>{{ user.text }}</a>
 			</li>
 		</ul>

@@ -10,11 +10,12 @@ ioServer.on('connection', function(socket) {
 	// 	console.log(key);
 	// }
 	ioServer.to(socket.id).emit('init', users);
-	socket.on('peer_open', function(id) {
-		users.push({id: id});
-		users = _.unique(users);
-		//socket.broadcast.to(id)
-		socket.broadcast.emit('broadcast', {type: 'peer_open', content: id});
+	socket.on('peer_open', function(user) {
+		if(!_.find(users, {id: user.id})) {
+			users.push(user);
+			socket.broadcast.emit('broadcast', {type: 'peer_open', content: user});
+		}
+		console.log(users);
 	});
 });
 

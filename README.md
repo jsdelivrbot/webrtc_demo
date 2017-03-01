@@ -4,7 +4,9 @@
 `npm install`
 
 ####在根目录下
-`npm start`
+如果没有全局安装hotnode，则
+`npm install hotnode -g`
+`npm run start`
 
 提示server started说明运行成功
 

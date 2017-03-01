@@ -6,6 +6,7 @@ var ioServer = require('socket.io')(server);
 var users = [];
 
 ioServer.on('connection', function(socket) {
+	console.log(users);
 	// for(key in socket.client) {
 	// 	console.log(key);
 	// }

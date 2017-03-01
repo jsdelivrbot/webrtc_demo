@@ -22,15 +22,18 @@ var chatList = new Vue({
 	},
 	methods: {
 		openSocket: function() {
+			var _this = this;
 			//建立与服务器的socket长连接
 			var socket = io();
 
 			//获取用户列表
 			socket.on('init', function(users) {
-				console.log('init,' + users);
-				for(var i = 0; i < users.length; i++) {
-					chatList.addPerson(users[i]);
-				}
+				console.log('init,' + users.toString());
+				users.forEach(function(user) {
+					if (user.id !== _this.userId) {
+						chatList.addPerson(user);
+					}
+				});
 			});
 
 			//有peer接入到webrtc服务器, 服务器通过socket将其他id实时推送到客户端
@@ -76,7 +79,7 @@ var chatList = new Vue({
 			// webrtc点开启成功, 记录peer信息到服务器
 			peer.on('open', function(id) {
 				self.peerId = id;
-				self.socket.emit('peer_open', {id:id, name:self.userId});
+				self.socket.emit('peer_open', {id: id, name: self.userId});
 			});
 			// Wait for a connection from the second peer.
 			peer.on('connection', function(connection) {
@@ -152,7 +155,6 @@ var chatList = new Vue({
 			}, function(stream) {
 				var call = self.peer.call(toId, stream);
 				call.on('stream', function(remoteStream) {
-					debugger
 					// Show stream in some video/canvas element.
 					self.showVideo(toId, remoteStream);
 				});

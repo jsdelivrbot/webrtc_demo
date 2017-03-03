@@ -6,6 +6,7 @@
 </head>
 <body>
 	<div id="chat-list">
+		<button v-on:click="closePeer($event)" id="{{ userId }}">disconnect</button>
 		<ul v-for="user in users">
 			<li v-on:click="requestVideo($event)" id="{{ user.id }}">
 				<video src="{{ user.videoStream}}" autoplay="" id="camera_box"></video>

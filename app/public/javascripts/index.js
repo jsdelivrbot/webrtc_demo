@@ -18,7 +18,7 @@ var chatList = new Vue({
 		window.URL = window.URL || window.webkitURL || window.msURL || window.oURL;
 		this.userId = getUrlSearch().id;
 		this.socket = this.openSocket();
-		this.peer = this.openPeer();
+		//this.peer = this.openPeer();
 	},
 	methods: {
 		openSocket: function() {
@@ -31,9 +31,10 @@ var chatList = new Vue({
 				console.log('init,' + users.toString());
 				users.forEach(function(user) {
 					if (user.id !== _this.userId) {
-						chatList.addPerson(user);
+						_this.addPerson(user);
 					}
 				});
+				_this.peer = _this.openPeer();
 			});
 
 			//有peer接入到webrtc服务器, 服务器通过socket将其他id实时推送到客户端
@@ -42,9 +43,11 @@ var chatList = new Vue({
 
 				switch(msg.type) {
 					case 'peer_open':
-						chatList.addPerson(msg.content);
+						_this.addPerson(msg.content);
 						break;
-						
+					case 'peer_close':
+						_this.removePerson(msg.content);
+						break;	
 				}
 
 				// //文本连接
@@ -118,11 +121,19 @@ var chatList = new Vue({
 
 			return peer;
 		},
+		closePeer: function() {
+			if (this.peer) {
+				this.peer.disconnect();
+			}
+		},
 		addPerson: function(user) {
 			this.users.push({
 				id: user.id,
 				text: user.name
 			});
+		},
+		removePerson: function(user) {
+
 		},
 		showVideo: function(id, stream) {
 			var src = (window.URL && window.URL.createObjectURL) ? window.URL.createObjectURL(stream) : stream;

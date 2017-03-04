@@ -1,35 +1,39 @@
 var server = require('./server');
 var _ = require('lodash');
 
-var ioServer = require('socket.io')(server);
+var socketIO = require('socket.io');
+var peer = require('peer');
 var DB = require('./db/db');
 
-var PeerServer = require('peer').PeerServer;
-var peerServer = PeerServer({
-    port: 9000,
-    path: '/'
-});
+function start() {
+    var ioServer = socketIO(server);
+    var PeerServer = peer.PeerServer;
+    var peerServer = PeerServer({
+        port: 9000,
+        path: '/'
+    });
 
-var users;
-
-//var users = [];
-
-//通过socketio登录
-ioServer.on('connection', function(socket) {
-    console.log('socket,' + socket.id);
     var db = DB();
+
+    db.open('peerUsers').then(function(collection) {
+        collection.find({}).toArray(function(err, docs) {
+            console.log(docs);
+        });
+    });
 
     peerServer.on('connection', function(id) {
         console.log('peer connection,', id);
-        db.open('users').then(function(collection) {
-            collection.find({userId: id}).toArray(function(err, docs) {
+        db.open('peerUsers').then(function(collection) {
+            collection.find({
+                userId: id
+            }).toArray(function(err, docs) {
                 if (!docs.length) {
-                    collection.insert({userId: id});
-                    socket.broadcast.emit('broadcast', {
-                        type: 'peer_open',
-                        content: {
+                    collection.insert({
+                        userId: id
+                    }, function(err, docs) {
+                        ioServer.emit('peer_open', {
                             userId: id
-                        }
+                        });
                     });
                 }
                 db.close();
@@ -38,23 +42,39 @@ ioServer.on('connection', function(socket) {
     });
 
     peerServer.on('disconnect', function(id) {
-        console.log('peer disconnection,', id);
-        socket.broadcast.emit('broadcast', {
-            type: 'peer_close',
-            content: {
+        console.log('peer disconnect,', id);
+        db.open('peerUsers').then(function(collection) {
+            collection.deleteOne({
                 userId: id
-            }
+            }, function(err, docs) {
+                if (!err) {
+                    ioServer.emit('peer_close', {
+                        userId: id
+                    });
+                }
+                db.close();
+            });
         });
     });
 
-    db.open('users').then(function(collection) {
-        console.log('getcollection');
-        collection.find({}).toArray(function(err, docs) {
-            console.log(docs);
-            ioServer.to(socket.id).emit('init', []);
-            db.close();
+    //通过socketio获取初始用户列表
+    ioServer.on('connection', function(socket) {
+        console.log('socket connection,' + socket.id);
+
+        db.open('peerUsers').then(function(collection) {
+            console.log('get peer collection');
+            collection.find({}).toArray(function(err, docs) {
+                socket.emit('init', docs);
+                db.close();
+            });
         });
     });
-});
 
-module.exports = ioServer;
+    ioServer.on('disconnect', function(socket) {
+        console.log('socket disconnect,' + socket.id);
+    });
+}
+
+module.exports = {
+    start: start
+};

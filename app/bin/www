@@ -1,1 +1,2 @@
-require('./ioServer');
+var ioServer = require('./ioServer');
+ioServer.start();

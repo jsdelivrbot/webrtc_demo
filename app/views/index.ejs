@@ -7,16 +7,17 @@
 <body>
 	<div id="chat-list">
 		<button v-on:click="closePeer($event)" id="{{ userId }}">disconnect</button>
-		<ul v-for="user in users">
-			<li v-on:click="requestVideo($event)" id="{{ user.id }}">
-				<video src="{{ user.videoStream}}" autoplay="" id="camera_box"></video>
-				<a>{{ user.text }}</a>
+		<ul>
+			<li v-for="user in users" v-on:click="requestVideo($event)" v-bind:id="user.userId">
+				<video v-bind:src="user.videoStreamSrc" autoplay="" id="camera_box"></video>
+				<p>id: {{user.userId}}, name: {{user.name}}</p>
 			</li>
 		</ul>
 	</div>
 	<script type="text/javascript" src="/libs/peer.js"></script>
 	<script type="text/javascript" src="/libs/socket.io-1.2.0.js"></script>
 	<script type="text/javascript" src="/libs/vue.js"></script>
+	<script type="text/javascript" src="/libs/lodash.js"></script>
 	<script type="text/javascript" src="/javascripts/index.js"></script>
 </body>
 </html>

@@ -16,7 +16,7 @@ class DB {
 				return;
 			}
 			MongoClient.connect(this.url).then((db) => {
-				console.log("openDB")
+				//console.log("openDB")
 				this.db = db;
 				var collection = this.collection = db.collection(table);
 				resolve(this.collection);

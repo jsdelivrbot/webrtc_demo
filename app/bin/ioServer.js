@@ -38,6 +38,8 @@ function start() {
                 }
                 db.close();
             });
+        }, function(err) {
+            console.log(err);
         });
     });
 
@@ -54,6 +56,8 @@ function start() {
                 }
                 db.close();
             });
+        }, function(err) {
+            console.log(err);
         });
     });
 
@@ -67,6 +71,8 @@ function start() {
                 socket.emit('init', docs);
                 db.close();
             });
+        }, function(err) {
+            console.log(err);
         });
     });
 

@@ -1,3 +1,20 @@
+<template>
+    <div id="app">
+        <button v-on:click="closePeer($event)" v-bind:id="userId">disconnect</button>
+        <ul>
+            <li v-for="user in users" v-on:click="requestVideo($event)" v-bind:id="user.userId">
+                <video v-bind:src="user.videoStreamSrc" autoplay="" id="camera_box"></video>
+                <p>id: {{user.userId}}, name: {{user.name}}</p>
+            </li>
+        </ul>
+    </div>
+</template>
+
+<script>
+const io = require('socket.io-client');
+//const peer = require('peer');
+const _ = require('lodash');
+
 function getUrlSearch() {
     var searchStr = window.location.search.substr(1);
     var searches = searchStr.split('&');
@@ -9,10 +26,11 @@ function getUrlSearch() {
     return searchObj;
 }
 
-var chatList = new Vue({
-    el: '#chat-list',
-    data: {
-        users: []
+module.exports = {
+    data: function() {
+        return {
+            users: []
+        }
     },
     created: function() {
         window.URL = window.URL || window.webkitURL || window.msURL || window.oURL;
@@ -44,6 +62,10 @@ var chatList = new Vue({
                 _this.removePerson(peerUser);
             });
 
+            socket.on('disconnect', function() {
+                //todo
+            });
+
             return socket;
         },
         openPeer: function() {
@@ -59,7 +81,6 @@ var chatList = new Vue({
             // assigned by the server.
             // webrtc点开启成功, 记录peer信息到服务器
             peer.on('open', function(id) {
-                alert('open peer');
                 console.log('peer open', id);
                 _this.peerId = id;
             });
@@ -163,5 +184,7 @@ var chatList = new Vue({
             });
         }
     }
-});
+};
+</script>
+
 

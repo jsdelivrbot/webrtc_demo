@@ -63,7 +63,7 @@
         "no-self-compare": 2,                     //不允与自己比较作为条件
         "no-sequences": 2,                        //禁止可能导致结果不明确的逗号操作符
         "no-throw-literal": 2,                    //禁止抛出一个直接量 应是Error对象
-        "no-return-assign": [2, "always"],        //不允return时有赋值操作
+        //"no-return-assign": [2, "always"],        //不允return时有赋值操作
         "no-redeclare": [2, {"builtinGlobals": true}],//不允许重复声明
         "no-unused-expressions": [2, {"allowShortCircuit": true, "allowTernary": true}],//不执行的表达式
         "no-useless-call": 2,                     //无意义的函数call或apply
@@ -72,7 +72,7 @@
         "no-with": 2,                             //禁用with
         "space-infix-ops": 2,                     //操作符前后空格
         "valid-jsdoc": [2, {"requireParamDescription": true, "requireReturnDescription": true}],//jsdoc
-        "no-warning-comments": [2, { "terms": ["todo", "fixme", "any other term"], "location": "anywhere" }],//标记未写注释
-        "curly": 1                                //if、else、while、for代码块用{}包围
+        "no-warning-comments": [2, { "terms": ["todo", "fixme", "any other term"], "location": "anywhere" }]//标记未写注释
+        //"curly": 1                                //if、else、while、for代码块用{}包围
     }
 }

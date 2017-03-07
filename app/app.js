@@ -3,12 +3,9 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
+var session = require('express-session');
 var bodyParser = require('body-parser');
 //var ejs = require('ejs');
-
-var routes = require('./routes/index');
-var users = require('./routes/users');
-
 
 var app = express();
 
@@ -24,10 +21,30 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(cookieParser());
+app.use(session());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/users', users);
+/*router*/
+app.use('/', require('./routes/index'));
+app.use('/', require('./routes/userRoutes'));
+app.use('/users', require('./routes/users'));
+/*router end*/
+
+//auth
+app.use(function (req, res, next) {
+    var err = req.session.error,
+        msg = req.session.success;
+    delete req.session.error;
+    delete req.session.success;
+    res.locals.message = '';
+    if (err) {
+        res.locals.message = '<p class="msg error">' + err + '</p>';
+    }
+    if (msg) {
+        res.locals.message = '<p class="msg success">' + msg + '</p>';
+    }
+    next();
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -35,6 +52,7 @@ app.use(function(req, res, next) {
     err.status = 404;
     next(err);
 });
+
 
 // error handlers
 

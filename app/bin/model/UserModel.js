@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
+var dbSettings = require('../db/settings');
 
-mongoose.connect('mongodb://127.0.0.1:27017/myapp');
+mongoose.connect(`mongodb://${dbSettings.HOST}:${dbSettings.PORT}/${dbSettings.DB}`);
 var UserSchema = new mongoose.Schema({
     username: String,
     password: String,

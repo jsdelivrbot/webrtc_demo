@@ -4,15 +4,19 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
+var MongoDBStore = require('connect-mongodb-session')(session);
 var bodyParser = require('body-parser');
+var dbSettings = require('./bin/db/settings');
+//var db = require('./bin/db/msession'); 
+
 //var ejs = require('ejs');
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.engine('html', require('hbs').__express);
-app.set('view engine', 'html');
+app.set('view engine', 'ejs');
+//app.engine('html', require('ejs').__express);
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
@@ -21,7 +25,22 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(cookieParser());
-app.use(session());
+app.use(session({
+    secret: dbSettings.COOKIE_SECRET,
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week 
+    },
+    store: new MongoDBStore({
+        uri: `mongodb://${dbSettings.HOST}:${dbSettings.PORT}/${dbSettings.DB}`,
+        collection: 'mySessions'
+    }),
+    // Boilerplate options, see: 
+    // * https://www.npmjs.com/package/express-session#resave 
+    // * https://www.npmjs.com/package/express-session#saveuninitialized 
+    resave: true,
+    saveUninitialized: true
+}));
+//app.use(session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 /*router*/

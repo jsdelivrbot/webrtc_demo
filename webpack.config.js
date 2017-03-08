@@ -35,7 +35,7 @@ var plugins = [
     //     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
     // }),
     new HtmlWebpackPlugin({
-        filename: path.resolve(__dirname, viewDir + 'index.html'),
+        filename: path.resolve(__dirname, viewDir + 'index.ejs'),
         template: path.resolve(__dirname, srcDir + 'tpl/index.html')
     })/*,
     new BrowserSyncPlugin({  

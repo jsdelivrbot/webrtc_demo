@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <div id="chatlist">
         <button v-on:click="closePeer($event)" v-bind:id="userId">disconnect</button>
         <ul>
             <li v-for="user in users" v-on:click="requestVideo($event)" v-bind:id="user.userId">
@@ -12,14 +12,14 @@
 
 <script>
 const io = require('socket.io-client');
-//const peer = require('peer');
+// const peer = require('peer');
 const _ = require('lodash');
 
-function getUrlSearch() {
+function getUrlSearch () {
     var searchStr = window.location.search.substr(1);
     var searches = searchStr.split('&');
     var searchObj = {};
-    for(var i = 0; i < searches.length; i++) {
+    for (var i = 0; i < searches.length; i++) {
         var currentSearch = searches[i].split('=');
         searchObj[currentSearch[0]] = currentSearch[1];
     }
@@ -30,9 +30,9 @@ module.exports = {
     data: function() {
         return {
             users: []
-        }
+        };
     },
-    created: function() {
+    created: function () {
         window.URL = window.URL || window.webkitURL || window.msURL || window.oURL;
         this.userId = getUrlSearch().id;
         this.socket = this.openSocket();
@@ -51,7 +51,7 @@ module.exports = {
                 _this.peer = _this.openPeer();
             });
 
-            //有peer接入到webrtc服务器, 服务器通过socket将其他id实时推送到客户端
+            // 有peer接入到webrtc服务器, 服务器通过socket将其他id实时推送到客户端
             socket.on('peer_open', function(peerUser) {
                 console.log('peer_open', peerUser);
                 _this.addPerson(peerUser);
@@ -63,14 +63,14 @@ module.exports = {
             });
 
             socket.on('disconnect', function() {
-                //todo
+                // todo
             });
 
             return socket;
         },
         openPeer: function() {
             var _this = this;
-            //开启一个webrtc点
+            // 开启一个webrtc点
             var peer = new Peer(this.userId, {
                 host: '/',
                 port: 9000
@@ -97,25 +97,25 @@ module.exports = {
                 //接收到另一客户端的数据信息
                 connection.on('data', function(data) {
                     switch(data.type) {
-                        //视频请求信息
-                        case 'video_request':
-                            var isConfirm = confirm(data.content);
-                            if(isConfirm) {
-                                _this.openVideo(
-                                    function(stream) {
-                                        var call = _this.peer.call(data.id, stream);
-                                        call.on('stream', function(remoteStream) {
-                                            // Show stream in some video/canvas element.
-                                            _this.showVideo(data.id, remoteStream);
-                                        });
-                                    },
-                                    function(err) {
-                                        console.log(err);
-                                    }
-                                );
-                            } else {
-                                return;
-                            }
+                    // 视频请求信息
+                    case 'video_request':
+                        var isConfirm = confirm(data.content);
+                        if(isConfirm) {
+                            _this.openVideo(
+                                function(stream) {
+                                    var call = _this.peer.call(data.id, stream);
+                                    call.on('stream', function(remoteStream) {
+                                        // Show stream in some video/canvas element.
+                                        _this.showVideo(data.id, remoteStream);
+                                    });
+                                },
+                                function(err) {
+                                    console.log(err);
+                                }
+                            );
+                        } else {
+                            return;
+                        }
                     }
                 });
             });
@@ -149,9 +149,7 @@ module.exports = {
         showVideo: function(id, stream) {
             var src = (window.URL && window.URL.createObjectURL) ? window.URL.createObjectURL(stream) : stream;
             this.users = this.users.map(function(user) {
-                if (user.userId === id) {
-                    return _.extend({}, user, {videoStreamSrc: src});
-                }
+                return user.userId === id ? _.extend({}, user, {videoStreamSrc: src}) : user;
             });
         },
         requestVideo: function(e) {
@@ -168,7 +166,7 @@ module.exports = {
             });
         },
         openVideo: function(successFn, failFn) {
-            var _this = this;
+            //var _this = this;
             //视频连接
             var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
             getUserMedia = getUserMedia.bind(navigator);
@@ -186,5 +184,3 @@ module.exports = {
     }
 };
 </script>
-
-

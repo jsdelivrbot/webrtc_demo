@@ -46,7 +46,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 /*router*/
 app.use('/', require('./routes/index'));
 app.use('/', require('./routes/userRoutes'));
-app.use('/users', require('./routes/users'));
+//app.use('/users', require('./routes/users'));
 /*router end*/
 
 //auth

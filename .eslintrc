@@ -1,5 +1,6 @@
 {
     "parser": "babel-eslint",
+    "extends": "vue",
     "parserOptions": {
         "ecmaVersion": 6,
         "sourceType": "module",
@@ -13,7 +14,10 @@
         "require": true, //node
         "module": true, //node
         "__dirname": true, //node
-        "console": true //all
+        "console": true, //all
+        "confirm": true,
+        "alert": true,
+        "Peer": true
     },
     "rules": {
         //官方文档 http://eslint.org/docs/rules/
@@ -28,6 +32,7 @@
 
         //常见错误
         "indent": [2, 4],                         //定义缩进为4个空格
+        "semi": [2, "always"],                    //强制使用分号
         "comma-dangle": [2, "never"],             //定义数组或对象最后多余的逗号
         "no-debugger": 2,                         //debugger 调试代码未删除
         "no-constant-condition": 2,               //常量作为条件
@@ -65,14 +70,21 @@
         "no-throw-literal": 2,                    //禁止抛出一个直接量 应是Error对象
         //"no-return-assign": [2, "always"],        //不允return时有赋值操作
         "no-redeclare": [2, {"builtinGlobals": true}],//不允许重复声明
-        "no-unused-expressions": [2, {"allowShortCircuit": true, "allowTernary": true}],//不执行的表达式
+        //"no-unused-expressions": [0, {"allowShortCircuit": true, "allowTernary": true}],//不执行的表达式
         "no-useless-call": 2,                     //无意义的函数call或apply
         "no-useless-concat": 2,                   //无意义的string concat
         "no-void": 2,                             //禁用void
         "no-with": 2,                             //禁用with
-        "space-infix-ops": 2,                     //操作符前后空格
+        "space-before-function-paren": [0, "always"],
+        "spaced-comment": 0,
+        "space-infix-ops": 0,                     //操作符前后空格
+        "space-before-blocks": [0, "always"],
+        "object-curly-spacing": [0, "never"],     //大括号空格
+        "keyword-spacing": [0, "always"],    //关键字后空格
+        "prefer-const": 0,
         "valid-jsdoc": [2, {"requireParamDescription": true, "requireReturnDescription": true}],//jsdoc
-        "no-warning-comments": [2, { "terms": ["todo", "fixme", "any other term"], "location": "anywhere" }]//标记未写注释
-        //"curly": 1                                //if、else、while、for代码块用{}包围
+        "no-warning-comments": [2, { "terms": ["todo", "fixme", "any other term"], "location": "anywhere" }],//标记未写注释
+        //"curly": 1,                                //if、else、while、for代码块用{}包围
+        "eol-last": 0
     }
 }

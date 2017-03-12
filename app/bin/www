@@ -1,2 +1,2 @@
 var ioServer = require('./ioServer');
-//ioServer.start();
+ioServer.start();

@@ -17,9 +17,16 @@ const routes = [
 ];
 
 const router = new VueRouter({
+	mode: 'hash',
+	base: __dirname,
     routes
 });
 
 new Vue({
-    router
+    router,
+    template: `
+		<div id="app">
+	      <router-view class="view"></router-view>
+	    </div>
+    `
 }).$mount('#app');

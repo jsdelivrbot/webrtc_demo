@@ -1,14 +1,14 @@
 <template>
     <div id="login">
         <form>
-            <lable for="username">User Name</lable>
+            <label for="username">User Name</label>
             <input id="username" type="text" name="username"/>
-            <lable for="password">Password</lable>
-            <input id="password" type="text" name="password"/>
+            <label for="password">Password</label>
+            <input id="password" type="password" name="password"/>
             <input v-if="type==='signup'" id="email" type="text" name="email"/>
             <input v-on:click="requestLogin($event)" type="button" v-bind:value="type==='login' ? 'Log In' : 'Sign Up'"/>
         </form>
-        <button v-if="type==='signup'" id="email" type="text" name="email"></button>
+        <a v-on:click="toggleType($event)" href="javascript:void(0);">{{type==='signup' ? '已有账户，请登录？':'没有账户？加入我们'}}</a>
         <p class="error-tip">{{errorMsg}}</p>
     </div>
 </template>
@@ -29,16 +29,26 @@
 
         },
         methods: {
+            toggleType: function() {
+                this.type = this.type === 'login' ? 'signup' : 'login';
+            },
             requestLogin: function(e) {
+                let _this = this;
                 let url = this.type === 'login' ? loginRequestUrl : signRequestUrl;
                 let formData = $(this.$el).find('form').serialize();
                 $.ajax(url, {
                     type: 'post',
                     data: JSON.stringify(formData)
-                }).done(function() {
-
-                }).fail(function() {
-
+                }).done(function(resp) {
+                    if (resp.errorMsg) {
+                        _this.errorMsg = resp.errorMsg;
+                    } else {
+                        if (resp.loginstatus) {
+                            _this.$router.push('/chatroom');
+                        }
+                    }
+                }).fail(function(err) {
+                    _this.errorMsg = 'login fail, please retry!';
                 });
             }
         }

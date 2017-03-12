@@ -68,6 +68,11 @@ module.exports = {
         filename: '[name]' + afterfix,
         sourceMapFilename: '[name].map'
     },
+    resolve: {
+        alias: {
+            'vue': 'vue/dist/vue.js'  
+        }
+    },
     // devServer: {
     //     contentBase: path.resolve(__dirname, outDir),
     //     inline: true

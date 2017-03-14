@@ -1,15 +1,14 @@
 <template>
     <div id="profile">
-        <p>{{username}}</p>
-        <input v-on:click="requestLogout($event)" type="button" value="logout"/>
+        <p>{{mySelf ? mySelf.userName : ''}}</p>
+        <input @click="requestLogout($event)" type="button" value="logout"/>
         <p class="error-tip">{{errorMsg}}</p>
     </div>
 </template>
 
 <script>
-    const logoutRequestUrl = './logout';
-    const $ = require('jquery');
     module.exports = {
+        props: ['mySelf'],
         data: function() {
             return {
                 errorMsg: ''
@@ -17,10 +16,11 @@
         },
         methods: {
             requestLogout: function(e) {
-                $.ajax(logoutRequestUrl, {
-                    type: 'get'
-                }).then(function() {
-
+                let _this = this;
+                this.$store.dispatch('logout').then(function() {
+                    _this.$router.push('/login');
+                }, function(err) {
+                    _this.errorMsg = err.errorMsg;
                 });
             }
         }

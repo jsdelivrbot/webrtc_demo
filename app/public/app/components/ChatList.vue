@@ -1,9 +1,10 @@
 <template>
     <div id="chatlist">
-        <button v-on:click="closePeer($event)" v-bind:id="userId">disconnect</button>
+        <Profile :mySelf="mySelf"></Profile>
+        <button @click="closePeer($event)" :id="userId">disconnect</button>
         <ul>
-            <li v-for="user in users" v-on:click="requestVideo($event)" v-bind:id="user.userId">
-                <video v-bind:src="user.videoStreamSrc" autoplay="" id="camera_box"></video>
+            <li v-for="user in users" @click="requestVideo($event)" :id="user.userId">
+                <video :src="user.videoStreamSrc" autoplay="" id="camera_box"></video>
                 <p>id: {{user.userId}}, name: {{user.name}}</p>
             </li>
         </ul>
@@ -11,34 +12,39 @@
 </template>
 
 <script>
-const io = require('socket.io-client');
+import { mapGetters } from 'vuex';
+import Profile from './Profile.vue';
+import io from 'socket.io-client';
 // const peer = require('peer');
-const _ = require('lodash');
-
-function getUrlSearch () {
-    var searchStr = window.location.search.substr(1);
-    var searches = searchStr.split('&');
-    var searchObj = {};
-    for (var i = 0; i < searches.length; i++) {
-        var currentSearch = searches[i].split('=');
-        searchObj[currentSearch[0]] = currentSearch[1];
-    }
-    return searchObj;
-}
+import _ from 'lodash';
 
 module.exports = {
     data: function() {
         return {
+            userId: '',
+            userName: '',
             users: []
         };
     },
-    created: function () {
-        window.URL = window.URL || window.webkitURL || window.msURL || window.oURL;
-        this.userId = getUrlSearch().id;
-        this.socket = this.openSocket();
-        //this.peer = this.openPeer();
+    created: function() {
+        if (!this.mySelf) {
+            this.$router.push('/login');
+        } else {
+            this.start();
+        }
     },
+    components: {Profile},
+    computed: mapGetters([
+        'mySelf'
+    ]),
     methods: {
+        start: function() {
+            window.URL = window.URL || window.webkitURL || window.msURL || window.oURL;
+            this.userId = this.mySelf.userId;
+            this.userName = this.mySelf.userName;
+            this.socket = this.openSocket();
+            //this.peer = this.openPeer();
+        },
         openSocket: function() {
             var _this = this;
             //建立与服务器的socket长连接

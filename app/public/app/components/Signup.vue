@@ -1,5 +1,5 @@
 <template>
-    <div id="login">
+    <div id="Signup">
         <form>
             <label for="email">Email</label>
             <input id="email" type="text" name="email"/>
@@ -7,9 +7,9 @@
             <input id="username" type="text" name="username"/>
             <label for="password">Password</label>
             <input id="password" type="password" name="password"/>
-            <input @click="requestLogin($event)" type="button" value="Log In"/>
+            <input @click="requestSignup($event)" type="button" value="Sign Up"/>
         </form>
-        <router-link to="/signup">没有账户？加入我们</router-link>
+        <router-link to="/login">已有账户，请登录</router-link>
         <p class="error-tip">{{errorMsg}}</p>
     </div>
 </template>
@@ -33,10 +33,10 @@
             }
         },
         methods: {
-            requestLogin: function(e) {
+            requestSignup: function(e) {
                 let _this = this;
                 let formData = $(this.$el).find('form').serialize();
-                this.$store.dispatch('login', formData).then(function(resp) {
+                this.$store.dispatch('signup', formData).then(function(resp) {
                     _this.$router.push('/');
                 }, function(err) {
                     _this.errorMsg = err.errorMsg;

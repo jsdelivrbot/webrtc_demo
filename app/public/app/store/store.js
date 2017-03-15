@@ -8,7 +8,7 @@ var user = window.BACKEND_VAR.user;
 // root state object.
 // each Vuex instance is just a single state tree.
 const state = {
-    mySelf: (user.userName ? user : '')
+    mySelf: (user.email ? user : '')
 };
 
 // mutations are operations that actually mutates the state.
@@ -19,9 +19,9 @@ const state = {
 const mutations = {
     saveMySelf (state, data) {
         state.mySelf = {
-            userName: data.userName,
-            userEmail: data.userEmail,
-            userId: data.userId
+            username: data.username,
+            email: data.email,
+            userid: data.userid
         };
     },
     logout (state) {

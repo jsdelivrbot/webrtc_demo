@@ -4,7 +4,7 @@
             <label for="email">Email</label>
             <input id="email" type="text" name="email"/>
             <label for="username">User Name</label>
-            <input id="username" type="text" name="username"/>
+            <input id="username" type="text" name="username" pattern="[A-z]{3}" required="required" />
             <label for="password">Password</label>
             <input id="password" type="password" name="password"/>
             <input @click="requestSignup($event)" type="button" value="Sign Up"/>

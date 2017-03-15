@@ -6,9 +6,9 @@ router.get('/', function(req, res, next) {
     var user = req.session.user || {};
     res.render('index', {
         title: 'WebRTC',
-        userEmail: user.email,
-        userName: user.username,
-        userId: user._id
+        email: user.email,
+        username: user.username,
+        userid: user._id
     });
 });
 

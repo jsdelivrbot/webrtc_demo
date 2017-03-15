@@ -1,6 +1,6 @@
 <template>
     <div id="profile">
-        <p>{{mySelf ? mySelf.userName : ''}}</p>
+        <p>{{mySelf ? mySelf.username : ''}}</p>
         <input @click="requestLogout($event)" type="button" value="logout"/>
         <p class="error-tip">{{errorMsg}}</p>
     </div>

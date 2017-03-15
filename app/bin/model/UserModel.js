@@ -1,7 +1,6 @@
 var mongoose = require('mongoose');
-var dbSettings = require('../db/settings');
+var db = require('../db/db');
 
-mongoose.connect(`mongodb://${dbSettings.HOST}:${dbSettings.PORT}/${dbSettings.DB}`);
 var UserSchema = new mongoose.Schema({
     username: String,
     email: String,
@@ -10,6 +9,6 @@ var UserSchema = new mongoose.Schema({
     hash: String
 });
 
-var User = mongoose.model('users', UserSchema);
+var User = db.model('users', UserSchema);
 
 module.exports = User;

@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "main": "http://localhost:3000",
   "scripts": {
-    "server": "babel-node app/bin/www",
+    "server": "nodemon app/bin/www",
+    "debug": "nodemon --debug app/bin/www",
     "frontend-dev": "webpack --progress --colors --watch",
     "frontend-build": "webpack"
   },

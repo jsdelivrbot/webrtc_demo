@@ -1,10 +1,9 @@
 var express = require('express');
 var router = express.Router();
-var hash = require('../bin/pass').hash;
+var hash = require('../bin/auth/pass').hash;
 var auth = require('../bin/auth/auth');
+var User = require('../bin/model/UserModel');
 var _ = require('lodash');
-
-var User = auth.User;
 
 /*router.get('/login', function (req, res) {
     res.render('login');
@@ -13,26 +12,17 @@ var User = auth.User;
 
 function getUserInfo(user) {
     return {
-        userName: user.username,
-        userEmail: user.email,
-        userId: user._id
+        username: user.username,
+        email: user.email,
+        userid: user._id
     };
 }
 
 router.get('/loginstatus', function(req, res) {
-    if (req.session.user) { //email, username, _id
-        res.json({
-            status: true,
-            result: _.extend({loginstatus: true}, getUserInfo(req.session.user))
-        });
-    } else {
-        res.json({
-            status: true,
-            result: {
-                loginstatus: false
-            }
-        });
-    }
+    res.json({
+        status: true,
+        result: req.session.user ? _.extend({loginstatus: true}, getUserInfo(req.session.user)) : {loginstatus: false}
+    });
 });
 
 router.post('/login', function(req, res) {
@@ -78,6 +68,14 @@ router.get('/logout', function (req, res) {
 });*/
 
 router.post('/signup', auth.userExist, function (req, res) {
+    if (req.session.error) {
+        res.json({
+            status: true,
+            result: {loginstatus: false, errorMsg: req.session.error}
+        });
+        return;
+    }
+    //console.log(req.body);
     var password = req.body.password;
     var username = req.body.username;
     var email = req.body.email;
@@ -85,13 +83,14 @@ router.post('/signup', auth.userExist, function (req, res) {
     hash(password, function (err, salt, hash) {
         if (err) throw err;
         new User({
-            username: username,
             email: email,
+            username: username,
             salt: salt,
             hash: hash
         }).save(function (err, newUser) {
             if (err) throw err;
             auth.authenticate(newUser.email, password, function(err, user) {
+                //console.log('user:', user);
                 if(user) {
                     req.session.regenerate(function() {
                         req.session.user = user;

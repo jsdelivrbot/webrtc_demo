@@ -1,17 +1,16 @@
 var User = require('../model/UserModel');
-var hash = require('../pass').hash;
+var hash = require('./pass').hash;
 
 module.exports = {
-    User: User,
     authenticate: function(email, pass, fn) {
         if (!module.parent) console.log('authenticating %s:%s', email, pass);
 
         User.findOne({email: email}, function(err, user) {
             if (user) {
                 if (err) return fn(new Error('cannot find user'));
-                hash(pass, user.salt, function(err, hash) {
+                hash(pass, user.salt, function(err, _hash) {
                     if (err) return fn(err);
-                    if (hash === user.hash) return fn(null, user);
+                    if (_hash.toString() === user.hash) return fn(null, user);
                     fn(new Error('invalid password'));
                 });
             } else {
@@ -28,6 +27,7 @@ module.exports = {
     //     }
     // },
     userExist: function(req, res, next) {
+        req.session.error = '';
         User.count({
             email: req.body.email
         }, function (err, count) {
@@ -35,6 +35,7 @@ module.exports = {
                 next();
             } else {
                 req.session.error = 'User Exist';
+                next();
             }
         });
     }

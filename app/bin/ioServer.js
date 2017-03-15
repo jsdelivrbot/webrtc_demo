@@ -3,7 +3,8 @@ var _ = require('lodash');
 
 var socketIO = require('socket.io');
 var peer = require('peer');
-var DB = require('./db/db');
+var PeerModel = require('./model/PeerModel');
+//var DB = require('./db/db');
 
 function start() {
     var ioServer = socketIO(server);
@@ -13,51 +14,46 @@ function start() {
         path: '/'
     });
 
-    var db = DB();
+    //var db = DB();
 
-    db.open('peerUsers').then(function(collection) {
-        collection.find({}).toArray(function(err, docs) {
-            console.log(docs);
-        });
-    });
+    // db.open('peerUsers').then(function(collection) {
+    //     collection.find({}).toArray(function(err, docs) {
+    //         console.log(docs);
+    //     });
+    // });
 
     peerServer.on('connection', function(id) {
         console.log('peer connection,', id);
-        db.open('peerUsers').then(function(collection) {
-            collection.find({
-                userId: id
-            }).toArray(function(err, docs) {
-                if (!docs.length) {
-                    collection.insert({
-                        userId: id
-                    }, function(err, docs) {
-                        ioServer.emit('peer_open', {
-                            userId: id
-                        });
+        PeerModel.findOne({id: id}, function(err, peerUser) {
+            if (err) {
+                throw new Error('find peer user failed!');
+            }
+            if (peerUser) {
+                console.log('peer user is exit, peerUser:' + peerUser);
+            } else {
+                new PeerModel({
+                    id: id
+                }).save(function(err, newPeer) {
+                    if (err) {
+                        throw new Error('save peer user failed!');
+                    }
+                    ioServer.emit('peer_open', {
+                        id: id
                     });
-                }
-                db.close();
-            });
-        }, function(err) {
-            console.log(err);
+                });
+            }
         });
     });
 
     peerServer.on('disconnect', function(id) {
         console.log('peer disconnect,', id);
-        db.open('peerUsers').then(function(collection) {
-            collection.deleteOne({
-                userId: id
-            }, function(err, docs) {
-                if (!err) {
-                    ioServer.emit('peer_close', {
-                        userId: id
-                    });
-                }
-                db.close();
+        PeerModel.remove({id: id}, function(err) {
+            if (err) {
+                throw new Error('remove peer failed!');
+            }
+            ioServer.emit('peer_close', {
+                id: id
             });
-        }, function(err) {
-            console.log(err);
         });
     });
 
@@ -65,14 +61,11 @@ function start() {
     ioServer.on('connection', function(socket) {
         console.log('socket connection,' + socket.id);
 
-        db.open('peerUsers').then(function(collection) {
-            console.log('get peer collection');
-            collection.find({}).toArray(function(err, docs) {
-                socket.emit('init', docs);
-                db.close();
-            });
-        }, function(err) {
-            console.log(err);
+        PeerModel.find({}, function(err, docs) {
+            if (err) {
+                throw new Error('find peers failed!');
+            }
+            socket.emit('init', docs);
         });
     });
 

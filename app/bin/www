@@ -1,2 +1,3 @@
-var ioServer = require('./ioServer');
-ioServer.start();
+var server = require('./server');
+var mediaServer = require('./mediaServer');
+mediaServer.start(server);

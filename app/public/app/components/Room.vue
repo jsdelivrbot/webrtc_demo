@@ -1,19 +1,9 @@
 <template>
-    <div id="chatlist">
-        <Profile :mySelf="mySelf"></Profile>
-        <button @click="closePeer($event)" :id="userId">disconnect</button>
-        <ul>
-            <li v-for="user in users" @click="requestVideo($event)" :id="user.userId">
-                <video :src="user.videoStreamSrc" autoplay="" id="camera_box"></video>
-                <p>id: {{user.userId}}, name: {{user.name}}</p>
-            </li>
-        </ul>
-    </div>
+    <div class="chat-room"></div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-import Profile from './Profile.vue';
 import io from 'socket.io-client';
 // const peer = require('peer');
 import _ from 'lodash';
@@ -21,9 +11,9 @@ import _ from 'lodash';
 module.exports = {
     data: function() {
         return {
-            userId: '',
-            userName: '',
-            users: []
+            users: [],
+            socket: null,
+            peer: null
         };
     },
     created: function() {
@@ -33,7 +23,6 @@ module.exports = {
             this.start();
         }
     },
-    components: {Profile},
     computed: mapGetters([
         'mySelf'
     ]),
@@ -53,8 +42,7 @@ module.exports = {
             //获取用户列表
             socket.on('init', function(users) {
                 console.log('init,' + users);
-                _this.users = users;
-                _this.peer = _this.openPeer();
+                //_this.peer = _this.openPeer();
             });
 
             // 有peer接入到webrtc服务器, 服务器通过socket将其他id实时推送到客户端
@@ -144,6 +132,11 @@ module.exports = {
                 this.peer.disconnect();
             }
         },
+        closeSocket: function() {
+            if (this.socket) {
+                this.socket.close();
+            }
+        },
         addPerson: function(user) {
             this.users.push(user);
         },
@@ -151,6 +144,10 @@ module.exports = {
             this.users = this.users.filter(function(_user) {
                 return _user.userId !== user.userId;
             });
+        },
+        exitRoom: function(roomId) {
+            this.socket.close();
+            //this.socket.emit('exit:room', roomId);
         },
         showVideo: function(id, stream) {
             var src = (window.URL && window.URL.createObjectURL) ? window.URL.createObjectURL(stream) : stream;

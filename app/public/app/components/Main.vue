@@ -1,23 +1,67 @@
 <template>
-    <div id="main"></div>
+    <div id="chatlist">
+        <Profile :mySelf="mySelf"></Profile>
+        <router-view></router-view>
+    </div>
 </template>
 
 <script>
-    const $ = require('jquery');
-    module.exports = {
-        created: function() {
+import { mapGetters } from 'vuex';
+import Profile from './Profile.vue';
+import $ from 'jquery';
+
+module.exports = {
+    data: function() {
+        return {
+            rooms: [],
+            socket: null
+        };
+    },
+    created: function() {
+        if (!this.mySelf) {
+            this.$router.push('/login');
+        } else {
+            this.start();
+        }
+    },
+    components: {Profile},
+    computed: mapGetters([
+        'mySelf'
+    ]),
+    methods: {
+        start: function() {
+            window.URL = window.URL || window.webkitURL || window.msURL || window.oURL;
+            this.userId = this.mySelf.userId;
+            this.userName = this.mySelf.userName;
+            //this.socket = this.openSocket();
+            //this.peer = this.openPeer();
+        },
+        createRoom: function(opts) {
             let _this = this;
-            $.ajax('./loginstatus').done(function(res) {
-                if (res.status) {
-                    if (res.result && res.result.loginstatus) {
-                        _this.$router.push('/chatroom');
-                    } else {
-                        _this.$router.push('/login');
-                    }
+            $.ajax('./createroom', {
+                type: 'post',
+                data: JSON.stringify(opts)
+            }).done(function(resp) {
+                if (resp.status && resp.result) {
+                    _this.rooms = resp.result.rooms;
+                } else {
+
                 }
-            }).fail(function() {
-                //todo
+            }).fail(function(err) {
+
+            });
+            //this.socket.emit('create:room', opts);
+        },
+        joinRoom: function(roomId) {
+            $.ajax('./joinroom', {
+                type: 'post',
+                data: roomId
+            }).done(function(resp) {
+                //跳转到room路由
+            }).fail(function(err) {
+                //重试
             });
         }
-    };
+    }
+};
 </script>

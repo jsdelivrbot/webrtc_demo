@@ -38,7 +38,7 @@ var plugins = [
         filename: path.resolve(__dirname, viewDir + 'index.ejs'),
         template: path.resolve(__dirname, srcDir + 'tpl/index.html')
     })/*,
-    new BrowserSyncPlugin({  
+    new BrowserSyncPlugin({
         // browse to http://localhost:3000/ during development
         host: '0.0.0.0',
         port: 3456, //代理后访问的端口
@@ -57,7 +57,6 @@ if (!isDev) {
     }));
 }
 
-
 module.exports = {
     entry: {
         //'style': __dirname + '/app/styles/ui.less',
@@ -70,7 +69,7 @@ module.exports = {
     },
     resolve: {
         alias: {
-            'vue': 'vue/dist/vue.js'  
+            'vue': 'vue/dist/vue.js'
         }
     },
     // devServer: {
@@ -86,7 +85,7 @@ module.exports = {
             query: {
                 presets: ['es2015', 'stage-0']
             }
-        }, 
+        },
         {
             test: /\.vue$/,
             loader: 'vue-loader'

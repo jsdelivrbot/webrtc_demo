@@ -7,7 +7,6 @@ var session = require('express-session');
 var MongoDBStore = require('connect-mongodb-session')(session);
 var bodyParser = require('body-parser');
 var dbSettings = require('./bin/db/settings');
-//var db = require('./bin/db/msession'); 
 
 //var ejs = require('ejs');
 

@@ -8,7 +8,8 @@ var user = window.BACKEND_VAR.user;
 // root state object.
 // each Vuex instance is just a single state tree.
 const state = {
-    mySelf: (user.email ? user : '')
+    mySelf: (user.email ? user : ''),
+    currentRoom: ''
 };
 
 // mutations are operations that actually mutates the state.
@@ -26,6 +27,9 @@ const mutations = {
     },
     logout (state) {
         state.mySelf = '';
+    },
+    setCurrentRoom (state, data) {
+        state.currentRoom = data;
     }
 };
 
@@ -94,12 +98,16 @@ const actions = {
                 }
             });
         });
+    },
+    setCurrentRoom ({ commit, state }, data) {
+        commit('setCurrentRoom', data);
     }
 };
 
 // getters are functions
 const getters = {
-    mySelf: state => state.mySelf
+    mySelf: state => state.mySelf,
+    currentRoom: state => state.currentRoom
 };
 
 // A Vuex instance is created by combining the state, mutations, actions,

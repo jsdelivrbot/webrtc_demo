@@ -27,6 +27,10 @@ router.get('/loginstatus', function(req, res) {
 
 router.post('/login', function(req, res) {
     auth.authenticate(req.body.email, req.body.password, function(err, user) {
+        if (err) {
+            res.status(500);
+            return;
+        }
         if (user) {
             req.session.regenerate(function() {
                 req.session.user = user;
@@ -59,14 +63,6 @@ router.get('/logout', function (req, res) {
     });
 });
 
-/*router.get('/signup', function (req, res) {
-    if (req.session.user) {
-        res.redirect('/');
-    } else {
-        res.render('signup');
-    }
-});*/
-
 router.post('/signup', auth.userExist, function (req, res) {
     if (req.session.error) {
         res.json({
@@ -82,14 +78,22 @@ router.post('/signup', auth.userExist, function (req, res) {
 
     hash(password, function (err, salt, hash) {
         if (err) throw err;
-        new User({
+        User.create({
             email: email,
             username: username,
             salt: salt,
             hash: hash
-        }).save(function (err, newUser) {
+        }, function (err, newUser) {
             if (err) throw err;
-            auth.authenticate(newUser.email, password, function(err, user) {
+            req.session.regenerate(function() {
+                req.session.user = newUser;
+                req.session.success = 'Authenticated as ' + newUser.username;
+                res.json({
+                    status: true,
+                    result: _.extend({loginstatus: true}, getUserInfo(newUser))
+                });
+            });
+            /*auth.authenticate(newUser.email, password, function(err, user) {
                 //console.log('user:', user);
                 if(user) {
                     req.session.regenerate(function() {
@@ -103,13 +107,9 @@ router.post('/signup', auth.userExist, function (req, res) {
                         });
                     });
                 }
-            });
+            });*/
         });
     });
 });
-
-/*router.get('/profile', auth.requiredAuthentication, function (req, res) {
-    res.send('Profile page of ' + req.session.user.username + '<br> click to <a href="/logout">logout</a>');
-});*/
 
 module.exports = router;

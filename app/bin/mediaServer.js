@@ -1,7 +1,8 @@
+var cookieParser = require('cookie-parser');
 var socketIO = require('socket.io');
 var peer = require('peer');
 var User = require('./model/UserModel');
-var Room = require('./model/UserModel');
+// var Room = require('./model/RoomModel');
 
 function start(server) {
     var ioServer = socketIO(server);
@@ -13,72 +14,20 @@ function start(server) {
 
     ioServer.use(function(socket, next) {
         if (socket.request.headers.cookie) {
+            socket.user = cookieParser(socket.request.headers.cookie); //todo test
             return next();
         }
         next(new Error('Authentication error'));
     });
 
-    //通过socketio获取初始用户列表
+    //建立socket连接（前端在进入聊天室后请求）
     ioServer.on('connection', function(socket) {
         console.log('socket connection,' + socket.id);
-        //找到用户信息
-        User.findOne({/*todo*/}, function(err, user) {
-            if (err) {
-                throw new Error('find peers failed!');
-            }
-            if (user) {
-                // {name: String, topic: String}
-                socket.on('create.room', function(opts) {
-                    new Room({
-                        id: '111', //TODO unique
-                        name: opts.name,
-                        topic: opts.topic,
-                        memberCount: 1,
-                        maxCount: 6
-                    }).save(function(err, newRoom) {
-                        if (err) {
-                            throw new Error('save room info failed');
-                        }
-                        socket.join(newRoom.id, function() {
-                            socket.emit('enter:room', newRoom);
-                        });
-                    });
-                });
-                //roomId:String
-                socket.on('join.room', function(roomId) {
-                    Room.findOne({id: roomId}, function(err, room) {
-                        if (err) {
-                            throw new Error('find room failed!');
-                        }
-                        if (!room) {
-                            socket.emit('error:room', 'find no room');
-                            return;
-                        }
-                        if (room.maxCount + 1 > room.maxCount) {
-                            socket.emit('error:room', 'the room is full');
-                            return;
-                        }
-                        //todo must confirm
-                        room.update({memberCount: room.memberCount + 1}, function(err, newRoom) {
-                            if (err) {
-                                throw new Error('update room info failed');
-                            }
-                            socket.join(newRoom.id, function() {
-                                socket.emit('enter:room', newRoom);
-                            });
-                        });
-                    });
-                });
-                //通知该用户目前的room数
-                Room.find({}, function(err, rooms) {
-                    if (err) {
-                        throw new Error('query rooms failed!');
-                    }
-                    socket.emit('init', rooms);
-                });
-            } else {
-                socket.emit('error:user', 'who are you?');
-            }
+
+        socket.on('join.socketRoom', function(id) {
+            socket.join(id, function() {
+                socket.emit('success:join.socketRoom');
+            });
         });
     });
 
@@ -86,38 +35,31 @@ function start(server) {
         console.log('socket disconnect,' + socket.id);
     });
 
+    //使用登录用户id来开启peer
     peerServer.on('connection', function(id) {
         console.log('peer connection,', id);
-        PeerModel.findOne({id: id}, function(err, peerUser) {
+        User.findOne({_id: id}, function(err, user) {
             if (err) {
-                throw new Error('find peer user failed!');
+                return;
             }
-            if (peerUser) {
-                console.log('peer user is exit, peerUser:' + peerUser);
-            } else {
-                new PeerModel({
+            user.rooms.forEach(function(room) {
+                ioServer.to(room).emit('peer_open', {
                     id: id
-                }).save(function(err, newPeer) {
-                    if (err) {
-                        throw new Error('save peer user failed!');
-                    }
-                    //全体通知
-                    ioServer.emit('peer_open', {
-                        id: id
-                    });
                 });
-            }
+            });
         });
     });
 
     peerServer.on('disconnect', function(id) {
         console.log('peer disconnect,', id);
-        PeerModel.remove({id: id}, function(err) {
+        User.findOne({_id: id}, function(err, user) {
             if (err) {
-                throw new Error('remove peer failed!');
+                return;
             }
-            ioServer.emit('peer_close', {
-                id: id
+            user.rooms.forEach(function(room) {
+                ioServer.to(room).emit('peer_close', {
+                    id: id
+                });
             });
         });
     });

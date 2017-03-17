@@ -5,13 +5,13 @@ import Signup from './components/Signup.vue';
 import Main from './components/Main.vue';
 import RoomList from './components/RoomList.vue';
 import Room from './components/Room.vue';
-//import Signup from './components/Signup.vue';
 import VueRouter from 'vue-router';
-//import $ from 'jquery';
-
 import store from './store/store';
 
-Vue.use(VueRouter);
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-default/index.css';
+
+Vue.use(VueRouter).use(ElementUI);
 
 const routes = [
     {
@@ -20,13 +20,13 @@ const routes = [
             {
                 // 当 /user/:id/profile 匹配成功，
                 // UserProfile 会被渲染在 User 的 <router-view> 中
-                path: '/',
+                path: '/rooms',
                 component: RoomList
             },
             {
                 // 当 /user/:id/posts 匹配成功
                 // UserPosts 会被渲染在 User 的 <router-view> 中
-                path: ':id',
+                path: '/room/:id',
                 component: Room
             }
         ]

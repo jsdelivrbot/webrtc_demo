@@ -1,5 +1,18 @@
 <template>
-    <div class="chat-room"></div>
+    <div class="chat-room" :id="currentRoom.id">
+        <h3>{{currentRoom.name}}</h3>
+        <h4>{{currentRoom.topic}}</h4>
+        <div class="creator">
+            <h3>{{currentRoom.creatorName}}</h3>
+        </div>
+        <ul>
+            <li class="c-member" v-for="member in currentRoom.members" @click="requestVideo($event)" :id="member.peerId">
+                <!-- <video :src="user.videoStreamSrc" autoplay="" id="camera_box"></video> -->
+                <p class="room-name">name: {{room.name}}</p>
+                <p class="room-topic">topic: {{room.topic}}</p>
+            </li>
+        </ul>
+    </div>
 </template>
 
 <script>
@@ -24,12 +37,13 @@ module.exports = {
         }
     },
     computed: mapGetters([
-        'mySelf'
+        'mySelf',
+        'currentRoom'
     ]),
     methods: {
         start: function() {
             window.URL = window.URL || window.webkitURL || window.msURL || window.oURL;
-            this.userId = this.mySelf.userId;
+            this.userId = this.mySelf.userid;
             this.userName = this.mySelf.userName;
             this.socket = this.openSocket();
             //this.peer = this.openPeer();
@@ -39,10 +53,12 @@ module.exports = {
             //建立与服务器的socket长连接
             var socket = io();
 
-            //获取用户列表
-            socket.on('init', function(users) {
-                console.log('init,' + users);
-                //_this.peer = _this.openPeer();
+            socket.on('connect', function() {
+                socket.emit('join.socketRoom', this.currentRoom.id);
+            });
+
+            socket.on('success:join.socketRoom', function() {
+                _this.peer = this.openPeer();
             });
 
             // 有peer接入到webrtc服务器, 服务器通过socket将其他id实时推送到客户端
@@ -54,6 +70,10 @@ module.exports = {
             socket.on('peer_close', function(peerUser) {
                 console.log('peer_close', peerUser);
                 _this.removePerson(peerUser);
+            });
+
+            socket.on('error', function() {
+
             });
 
             socket.on('disconnect', function() {

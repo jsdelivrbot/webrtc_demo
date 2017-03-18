@@ -1,25 +1,27 @@
 <template>
-    <ul>
-        <li class="c-room c-room-add" @click="showAddForm($event)">add</li>
-        <li class="c-room" v-for="room in rooms" @click="joinRoom($event)" :id="room.id">
-            <!-- <video :src="user.videoStreamSrc" autoplay="" id="camera_box"></video> -->
-            <p class="room-name">name: {{room.name}}</p>
-            <p class="room-topic">topic: {{room.topic}}</p>
-        </li>
-    </ul>
-    <p v-if="errorMsg" class="error-tips">{{errorMsg}}</p>
-    <el-form ref="form" v-show="formVisible" :model="addRoomForm" :rules="this.$store.state.userinfo.CheckRules" label-position="left" label-width="180px">
-        <el-form-item label="名称" prop="name">
-            <el-input v-model="addRoomForm.name"></el-input>
-        </el-form-item>
-        <el-form-item label="主题" prop="topic">
-            <el-input v-model="addRoomForm.topic"></el-input>
-        </el-form-item>
-        <el-form-item>
-            <el-button type="primary" @click="createRoom">提交</el-button>
-            <el-button type="primary" @click="cancelCreateRoom">取消</el-button>
-        </el-form-item>
-    </el-form>
+    <div class="room-list">
+        <ul>
+            <li class="c-room c-room-add" @click="showAddForm($event)">add</li>
+            <li class="c-room" v-for="room in rooms" @click="joinRoom($event)" :id="room.id">
+                <!-- <video :src="user.videoStreamSrc" autoplay="" id="camera_box"></video> -->
+                <p class="room-name">name: {{room.name}}</p>
+                <p class="room-topic">topic: {{room.topic}}</p>
+            </li>
+        </ul>
+        <p v-if="errorMsg" class="error-tips">{{errorMsg}}</p>
+        <el-form ref="form" v-show="formVisible" :model="addRoomForm" label-position="left" label-width="180px">
+            <el-form-item label="名称" prop="name">
+                <el-input v-model="addRoomForm.name"></el-input>
+            </el-form-item>
+            <el-form-item label="主题" prop="topic">
+                <el-input v-model="addRoomForm.topic"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="createRoom">提交</el-button>
+                <el-button type="primary" @click="cancelCreateRoom">取消</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
 </template>
 
 <script>
@@ -32,7 +34,8 @@ module.exports = {
             rooms: [],
             errorMsg: '',
             socket: null,
-            addRoomForm: {}
+            addRoomForm: {},
+            formVisible: false
         };
     },
     created: function() {

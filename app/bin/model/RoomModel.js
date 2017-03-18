@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var db = require('../db/db');
-var User = require('./UserModel');
+var UserSchema = require('./UserSchema');
 
 var RoomSchema = new mongoose.Schema({
     name: String,
@@ -8,7 +8,7 @@ var RoomSchema = new mongoose.Schema({
     creatorName: String,
     creatorEmail: String,
     //status: String,
-    members: [User],
+    members: [UserSchema],
     maxCount: Number
 });
 

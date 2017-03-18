@@ -1,12 +1,12 @@
 //import 'babel-polyfill';
 import Vue from 'vue';
+import VueRouter from 'vue-router';
+import store from './store/store';
 import Login from './components/Login.vue';
 import Signup from './components/Signup.vue';
 import Main from './components/Main.vue';
 import RoomList from './components/RoomList.vue';
 import Room from './components/Room.vue';
-import VueRouter from 'vue-router';
-import store from './store/store';
 
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-default/index.css';

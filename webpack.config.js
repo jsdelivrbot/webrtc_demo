@@ -85,19 +85,23 @@ module.exports = {
             query: {
                 presets: ['es2015', 'stage-0']
             }
-        },
-        {
+        }, {
             test: /\.vue$/,
             loader: 'vue-loader'
-        }/*,
-        {
-            test: /\.less$/,
-            loader: ExtractTextPlugin.extract({
+        }, {
+            test: /\.css$/,
+            use: ExtractTextPlugin.extract({
                 fallback: 'style-loader',
-                //resolve-url-loader may be chained before sass-loader if necessary 
-                use: ['css-loader', 'less-loader']
+                use: 'css-loader'
             })
-        }*/, {
+        }, {
+            test: /\.(woff|svg|eot|ttf)\??.*$/,
+            /*test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,*/
+            loader: 'url-loader',
+            query: {
+                limit: 25000
+            }
+        }, {
             test: /\.(png|jpg)$/,
             loader: 'url?limit=25000'
         }]

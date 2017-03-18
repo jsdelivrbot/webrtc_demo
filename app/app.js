@@ -46,6 +46,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 /*router*/
 app.use('*', require('./routes/index'));
 app.use('/', require('./routes/userRoutes'));
+app.use('/', require('./routes/chatRoutes'));
 //app.use('/users', require('./routes/users'));
 /*router end*/
 
@@ -71,7 +72,6 @@ app.use(function(req, res, next) {
     err.status = 404;
     next(err);
 });
-
 
 // error handlers
 

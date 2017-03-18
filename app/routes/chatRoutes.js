@@ -104,7 +104,7 @@ router.post('/joinRoom', function(req, res) {
     });
 });
 
-router.get('/getRooms', function(req, res) {
+router.post('/getRooms', function(req, res) {
     if (!req.session.user) {
         res.status(401);
         return;

@@ -90,7 +90,7 @@ const actions = {
     logout ({ commit, state }) {
         return new Promise((resolve, reject) => {
             $.ajax('./logout', {
-                type: 'get'
+                type: 'post'
             }).then(function(resp) {
                 if (resp.status) {
                     commit('logout');

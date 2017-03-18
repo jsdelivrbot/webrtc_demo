@@ -18,7 +18,7 @@ function getUserInfo(user) {
     };
 }
 
-router.get('/loginstatus', function(req, res) {
+router.post('/loginstatus', function(req, res) {
     res.json({
         status: true,
         result: req.session.user ? _.extend({loginstatus: true}, getUserInfo(req.session.user)) : {loginstatus: false}
@@ -52,7 +52,7 @@ router.post('/login', function(req, res) {
     });
 });
 
-router.get('/logout', function (req, res) {
+router.post('/logout', function (req, res) {
     req.session.destroy(function () {
         res.json({
             status: true,

@@ -37,7 +37,7 @@
                 let _this = this;
                 let formData = $(this.$el).find('form').serialize();
                 this.$store.dispatch('login', formData).then(function(resp) {
-                    _this.$router.push('/');
+                    _this.$router.push('/rooms');
                 }, function(err) {
                     _this.errorMsg = err.errorMsg;
                 });

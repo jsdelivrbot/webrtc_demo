@@ -18,7 +18,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import io from 'socket.io-client';
-// const peer = require('peer');
+import Peer from '../lib/peer';
 import _ from 'lodash';
 
 module.exports = {

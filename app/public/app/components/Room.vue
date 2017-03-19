@@ -36,6 +36,10 @@ module.exports = {
             this.start();
         }
     },
+    destroyed: function() {
+        this.closeSocket();
+        this.closePeer();
+    },
     computed: mapGetters([
         'mySelf',
         'currentRoom'
@@ -54,11 +58,13 @@ module.exports = {
             var socket = io();
 
             socket.on('connect', function() {
-                socket.emit('join.socketRoom', this.currentRoom.id);
+                console.log('socket connect');
+                socket.emit('join.socketRoom', _this.currentRoom.id);
             });
 
             socket.on('success:join.socketRoom', function() {
-                _this.peer = this.openPeer();
+                console.log('success:join.socketRoom');
+                //_this.peer = _this.openPeer();
             });
 
             // 有peer接入到webrtc服务器, 服务器通过socket将其他id实时推送到客户端
@@ -73,11 +79,11 @@ module.exports = {
             });
 
             socket.on('error', function() {
-
+                console.log('socket error');
             });
 
             socket.on('disconnect', function() {
-                // todo
+                console.log('socket disconnect');
             });
 
             return socket;

@@ -3,25 +3,13 @@ var router = express.Router();
 var hash = require('../bin/auth/pass').hash;
 var auth = require('../bin/auth/auth');
 var User = require('../bin/model/UserModel');
+var Utils = require('../utils/Utils');
 var _ = require('lodash');
 
-/*router.get('/login', function (req, res) {
-    res.render('login');
-});
-*/
-
-function getUserInfo(user) {
-    return {
-        username: user.username,
-        email: user.email,
-        userid: user._id
-    };
-}
-
-router.post('/loginstatus', function(req, res) {
+router.post('/getMySelf', function(req, res) {
     res.json({
         status: true,
-        result: req.session.user ? _.extend({loginstatus: true}, getUserInfo(req.session.user)) : {loginstatus: false}
+        result: req.session.user ? _.extend({loginstatus: true}, Utils.getUserInfo(req.session.user)) : {loginstatus: false}
     });
 });
 
@@ -39,7 +27,7 @@ router.post('/login', function(req, res) {
                 //res.redirect('/');
                 res.json({
                     status: true,
-                    result: _.extend({loginstatus: true}, getUserInfo(user))
+                    result: _.extend({loginstatus: true}, Utils.getUserInfo(user))
                 });
             });
         } else {
@@ -90,7 +78,7 @@ router.post('/signup', auth.userExist, function (req, res) {
                 req.session.success = 'Authenticated as ' + newUser.username;
                 res.json({
                     status: true,
-                    result: _.extend({loginstatus: true}, getUserInfo(newUser))
+                    result: _.extend({loginstatus: true}, Utils.getUserInfo(newUser))
                 });
             });
             /*auth.authenticate(newUser.email, password, function(err, user) {

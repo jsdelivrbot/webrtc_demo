@@ -7,6 +7,7 @@ import Signup from './components/Signup.vue';
 import Main from './components/Main.vue';
 import RoomList from './components/RoomList.vue';
 import Room from './components/Room.vue';
+import ErrorPage from './components/ErrorPage.vue';
 
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-default/index.css';
@@ -32,7 +33,8 @@ const routes = [
         ]
     },
     {path: '/login', component: Login},
-    {path: '/signup', component: Signup}
+    {path: '/signup', component: Signup},
+    {path: '/error', component: ErrorPage}
 ];
 
 const router = new VueRouter({

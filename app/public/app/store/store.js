@@ -64,18 +64,22 @@ const actions = {
     signup ({ commit, state }, formData) {
         return loginOrSign('./signup', formData, commit);
     },
-    getLoginStatus ({ commit, state }) {
+    getMySelf ({ commit, state }, update) {
         return new Promise((resolve, reject) => {
-            if (state.mySelf) {
+            if (state.mySelf && !update) {
                 resolve(state.mySelf);
                 return;
             }
-            $.ajax('./loginstatus', {
-                type: 'get'
+            $.ajax('./getMySelf', {
+                type: 'post'
             }).done(function(resp) {
                 if (resp.status) {
-                    commit('saveMySelf', Object.assign({type: 'get'}, resp.result));
-                    resolve(resp.result);
+                    if (resp.result && resp.result.loginstatus) {
+                        commit('saveMySelf', resp.result);
+                        resolve(resp.result);
+                    } else {
+                        reject(resp.result);
+                    }
                 } else {
                     reject(resp.result);
                 }

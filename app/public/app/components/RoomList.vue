@@ -6,6 +6,7 @@
                 <!-- <video :src="user.videoStreamSrc" autoplay="" id="camera_box"></video> -->
                 <p class="room-name">name: {{room.name}}</p>
                 <p class="room-topic">topic: {{room.topic}}</p>
+                <button v-if="room.creatorEmail===mySelf.email" @click="deleteRoom($event)" :id="room.id">delete</button>
             </li>
         </ul>
         <p v-if="errorMsg" class="error-tips">{{errorMsg}}</p>
@@ -71,13 +72,40 @@ module.exports = {
             $.ajax({
                 url: './createRoom',
                 type: 'post',
-                data: JSON.stringify(this.addRoomForm)
+                data: this.addRoomForm
             }).done(function(resp) {
                 if (resp.errorMsg) {
                     _this.errorMsg = resp.errorMsg;
+                    return;
                 }
+                _this.errorMsg = '';
                 if (resp.status && resp.result) {
-                    _this.$router.push('/room/' + resp.result.id);
+                    _this.formVisible = false;
+                    _this.rooms.push(resp.result);
+                    //_this.joinRoom(resp.result.id);
+                }
+            }).fail(function(err) {
+                _this.errorMsg = err.errorMsg;
+            });
+        },
+        deleteRoom: function(e) {
+            e.stopPropagation();
+            let _this = this;
+            let roomId = e.currentTarget.id;
+            $.ajax({
+                url: './deleteRoom',
+                type: 'post',
+                data: {id: roomId}
+            }).done(function(resp) {
+                if (resp.errorMsg) {
+                    _this.errorMsg = resp.errorMsg;
+                    return;
+                }
+                _this.errorMsg = '';
+                if (resp.status && resp.result) {
+                    _this.formVisible = false;
+                    _this.rooms = _this.rooms.filter(room => room.id !== roomId);
+                    //_this.joinRoom(resp.result.id);
                 }
             }).fail(function(err) {
                 _this.errorMsg = err.errorMsg;
@@ -92,7 +120,7 @@ module.exports = {
             $.ajax({
                 url: './joinRoom',
                 type: 'post',
-                data: JSON.stringify({id: roomId})
+                data: {id: roomId}
             }).done(function(resp) {
                 if (resp.errorMsg) {
                     _this.errorMsg = resp.errorMsg;

@@ -14,7 +14,8 @@ function start(server) {
 
     ioServer.use(function(socket, next) {
         if (socket.request.headers.cookie) {
-            socket.user = cookieParser(socket.request.headers.cookie); //todo test
+            //socket.user = cookieParser(socket.request.headers.cookie);
+            //console.log('socketuser', socket.user);
             return next();
         }
         next(new Error('Authentication error'));

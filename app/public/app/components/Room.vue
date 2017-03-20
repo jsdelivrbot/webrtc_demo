@@ -1,12 +1,12 @@
 <template>
-    <div class="chat-room" :id="currentRoom.id">
-        <h3>{{currentRoom.name}}</h3>
-        <h4>{{currentRoom.topic}}</h4>
+    <div class="chat-room" :id="roomId">
+        <h3>{{roomInfo.name}}</h3>
+        <h4>{{roomInfo.topic}}</h4>
         <div class="creator">
-            <h3>{{currentRoom.creatorName}}</h3>
+            <h3>{{roomInfo.creatorName}}</h3>
         </div>
         <ul>
-            <li class="c-member" v-for="member in currentRoom.members" @click="requestVideo($event)" :id="member.peerId">
+            <li class="c-member" v-for="member in roomInfo.members" @click="requestVideo($event)" :id="member.peerId">
                 <!-- <video :src="user.videoStreamSrc" autoplay="" id="camera_box"></video> -->
                 <p class="room-name">name: {{room.name}}</p>
                 <p class="room-topic">topic: {{room.topic}}</p>
@@ -26,14 +26,18 @@ module.exports = {
         return {
             users: [],
             socket: null,
-            peer: null
+            peer: null,
+            roomInfo: null,
+            roomId: ''
         };
     },
-    created: function() {
+    mounted: function() {
         if (!this.mySelf) {
             this.$router.push('/login');
         } else {
-            this.start();
+            this.init({
+                roomId: this.$route.params.id
+            });
         }
     },
     destroyed: function() {
@@ -41,15 +45,15 @@ module.exports = {
         this.closePeer();
     },
     computed: mapGetters([
-        'mySelf',
-        'currentRoom'
+        'mySelf'
     ]),
     methods: {
-        start: function() {
-            window.URL = window.URL || window.webkitURL || window.msURL || window.oURL;
+        init: function(roomId) {
+            //window.URL = window.URL || window.webkitURL || window.msURL || window.oURL;
             this.userId = this.mySelf.userid;
             this.userName = this.mySelf.userName;
             this.socket = this.openSocket();
+            this.roomId = roomId;
             //this.peer = this.openPeer();
         },
         openSocket: function() {
@@ -59,11 +63,17 @@ module.exports = {
 
             socket.on('connect', function() {
                 console.log('socket connect');
-                socket.emit('join.socketRoom', _this.currentRoom.id);
+                socket.emit('join.socketRoom', _this.roomId);
             });
 
-            socket.on('success:join.socketRoom', function() {
-                console.log('success:join.socketRoom');
+            socket.on('success:join.socketRoom', function(roomInfo) {
+                console.log(roomInfo);
+                //_this.peer = _this.openPeer();
+            });
+
+            socket.on('success:join.socketRoom', function(roomInfo) {
+                console.log(roomInfo);
+                _this.roomInfo = roomInfo;
                 //_this.peer = _this.openPeer();
             });
 

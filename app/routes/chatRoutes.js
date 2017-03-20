@@ -82,60 +82,7 @@ router.post('/joinRoom', function(req, res) {
     }
 
     let id = req.body.id;
-
-    //更新该用户和房间信息
-    User.findOneAndUpdate({email: user.email}, {'$push': {'rooms': id}}, function(err, _user) {
-        console.log('user update:', _user);
-        if (err) {
-            res.json({
-                status: false,
-                errorMsg: 'update user info failed'
-            });
-            return;
-        }
-        if (!_user) {
-            res.json({
-                status: false,
-                errorMsg: 'no user matched'
-            });
-        }
-        Room.findOne({_id: id}, function(err, room) {
-            if (err) {
-                res.json({
-                    status: false,
-                    errorMsg: 'find room failed'
-                });
-                return;
-            }
-            if (!room) {
-                res.json({
-                    status: false,
-                    errorMsg: 'no room matched'
-                });
-            }
-            if (room.members.length === room.maxCount) {
-                res.json({
-                    status: false,
-                    errorMsg: 'this room if full'
-                });
-                return;
-            }
-            Room.findOneAndUpdate({_id: id}, {'$push': {'members': _user._id}}, function(err, _room) {
-                console.log('Room update:', _room);
-                if (err) {
-                    res.json({
-                        status: false,
-                        errorMsg: 'join room failed'
-                    });
-                    return;
-                }
-                res.json({
-                    status: true,
-                    result: Utils.getRoomInfo(_room)
-                });
-            });
-        });
-    });
+    //todo
 });
 
 /*router.post('/exitRoom', function(req, res) {
@@ -151,10 +98,20 @@ router.post('/joinRoom', function(req, res) {
 });*/
 
 router.post('/getRoomInfo', function(req, res) {
-    if (!req.session.user) {
+    let user = req.session.user;
+    if (!user) {
         res.status(401);
         return;
     }
+    let id = req.body.id;
+    Utils.getRoomInfo(user, id).then(function(data) {
+        res.json({
+            status: true,
+            result: data.room
+        });
+    }, function(data) {
+        res.status(400).json(data);
+    });
 });
 
 router.post('/getRooms', function(req, res) {
@@ -162,15 +119,13 @@ router.post('/getRooms', function(req, res) {
         res.status(401);
         return;
     }
-    Room.find({}, function(err, rooms) {
-        if (err) {
-            res.status(400).json({error: 'get rooms failed'});
-            return;
-        }
+    Utils.getRooms().then(function(data) {
         res.json({
             status: true,
-            result: Utils.getRoomsInfo(rooms)
+            result: data.rooms
         });
+    }, function(data) {
+        res.status(400).json(data);
     });
 });
 

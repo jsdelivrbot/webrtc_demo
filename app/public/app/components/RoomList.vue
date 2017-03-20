@@ -126,7 +126,7 @@ module.exports = {
                     _this.errorMsg = resp.errorMsg;
                 }
                 if (resp.status && resp.result) {
-                    _this.$store.dispatch('setCurrentRoom', resp.result);
+                    //_this.$store.dispatch('setCurrentRoom', resp.result);
                     _this.$router.push('/room/' + resp.result.id);
                 }
             }).fail(function(err) {

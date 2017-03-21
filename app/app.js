@@ -3,10 +3,10 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
-var session = require('express-session');
-var MongoDBStore = require('connect-mongodb-session')(session);
+var sessionMiddleware = require('./middleware/sessionMiddleware');
+//var session = require('express-session');
+//var MongoDBStore = require('connect-mongodb-session')(session);
 var bodyParser = require('body-parser');
-var dbSettings = require('./bin/db/settings');
 
 //var ejs = require('ejs');
 
@@ -24,21 +24,7 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(cookieParser());
-app.use(session({
-    secret: dbSettings.COOKIE_SECRET,
-    cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week 
-    },
-    store: new MongoDBStore({
-        uri: `mongodb://${dbSettings.HOST}:${dbSettings.PORT}/${dbSettings.DB}`,
-        collection: 'mySessions'
-    }),
-    // Boilerplate options, see: 
-    // * https://www.npmjs.com/package/express-session#resave 
-    // * https://www.npmjs.com/package/express-session#saveuninitialized 
-    resave: true,
-    saveUninitialized: true
-}));
+app.use(sessionMiddleware);
 
 //app.use(session());
 app.use(express.static(path.join(__dirname, 'public')));

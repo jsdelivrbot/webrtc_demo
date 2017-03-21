@@ -95,15 +95,12 @@ module.exports = {
                 use: 'css-loader'
             })
         }, {
-            test: /\.(woff|svg|eot|ttf)\??.*$/,
+            test: /\.(woff|svg|eot|ttf|png|jpg)\??.*$/,
             /*test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,*/
             loader: 'url-loader',
             query: {
-                limit: 25000
+                limit: 8
             }
-        }, {
-            test: /\.(png|jpg)$/,
-            loader: 'url?limit=25000'
         }]
     },
     plugins: plugins

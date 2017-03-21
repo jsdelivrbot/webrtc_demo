@@ -1,10 +1,10 @@
 var socketIO = require('socket.io');
-var cookieParserIO = require('cookie-parser-io');
+//var cookieParserIO = require('cookie-parser-io');
 var peer = require('peer');
-var User = require('./model/UserModel');
-var Room = require('./model/RoomModel');
-var Utils = require('../utils/Utils');
-var settings = require('./db/settings');
+var User = require('../model/UserModel');
+var ioSessionMiddleware = require('./middleware/ioSessionMiddleware');
+
+var SocketClient = require('./SocketClient');
 
 function start(server) {
     var ioServer = socketIO(server);
@@ -14,39 +14,31 @@ function start(server) {
         path: '/'
     });
 
-    ioServer.use(cookieParserIO(settings.COOKIE_SECRET));
+    ioServer.use(ioSessionMiddleware);
 
-    //建立socket连接（前端在进入聊天室后请求）
+    //建立socket连接（前端在进入会议室大厅后请求）
     ioServer.on('connection', function(socket) {
+        let session = socket.handshake.session;
+        console.log('socket.handshake.session:', session);
         console.log('socket connection,' + socket.id);
 
-        socket.on('join.socketRoom', function(id) {
-            socket.join(id, function(err) {
-                if (err) {
-                    socket.emit('error:join.socketRoom', {
-                        errorMsg: 'join room failed'
-                    });
-                    return;
-                }
-                Room.findOneById(id, function(_err, room) {
-                    if (_err) {
-                        socket.emit('error:join.socketRoom', {
-                            errorMsg: 'find room info failed'
-                        });
-                        return;
-                    }
-                    if (!room) {
-                        socket.emit('error:join.socketRoom', {
-                            errorMsg: 'this id match no room'
-                        });
-                        return;
-                    }
-                    socket.emit('success:join.socketRoom', {
-                        room: Utils.getRoomInfo(room)
-                    });
-                });
+        let user = session.user;
+
+        if (!user) {
+            socket.emit('failed:auth', {
+                errorCode: 401,
+                errorMsg: 'please login first!'
             });
-        });
+        }
+
+        let client = new SocketClient(ioServer, socket, user);
+
+        socket.on('create.room', client.createRoom);
+        socket.on('delete.room', client.deleteRoom);
+        socket.on('join.room', client.joinRoom);
+        socket.on('get.roomInfo', client.getRoomInfo);
+        socket.on('get.rooms', client.getRooms);
+        socket.on('exit.room', client.exitRoom);
     });
 
     ioServer.on('disconnect', function(socket) {

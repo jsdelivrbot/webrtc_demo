@@ -6,7 +6,7 @@
             <h3>{{roomInfo.creatorName}}</h3>
         </div>
         <ul>
-            <li class="c-member" v-for="member in roomInfo.members" @click="requestVideo($event)" :id="member.peerId">
+            <li class="c-member" v-for="member in members" @click="requestVideo($event)" :id="member.peerId">
                 <!-- <video :src="user.videoStreamSrc" autoplay="" id="camera_box"></video> -->
                 <p class="room-name">name: {{room.name}}</p>
                 <p class="room-topic">topic: {{room.topic}}</p>
@@ -24,7 +24,7 @@ import _ from 'lodash';
 module.exports = {
     data: function() {
         return {
-            users: [],
+            members: [],
             socket: null,
             peer: null,
             roomInfo: null,
@@ -68,6 +68,7 @@ module.exports = {
 
             socket.on('success:join.socketRoom', function(roomInfo) {
                 console.log(roomInfo);
+                _this.members = roomInfo.members;
                 //_this.peer = _this.openPeer();
             });
 

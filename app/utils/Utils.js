@@ -1,7 +1,8 @@
 var User = require('../model/UserModel');
 var Room = require('../model/RoomModel');
+var _ = require('lodash');
 
-function getUserInfo(user, opts) {
+function mapUserInfo(user, opts) {
     let info = {
         username: user.username,
         email: user.email,
@@ -14,11 +15,11 @@ function getUserInfo(user, opts) {
     return info;
 }
 
-function getRoomsInfo(rooms) {
-    return rooms.map(getRoomInfo);
+function mapRoomsInfo(rooms) {
+    return rooms.map(mapRoomInfo);
 }
 
-function getRoomInfo(room) {
+function mapRoomInfo(room) {
     if (!room) {
         return room;
     }
@@ -53,7 +54,7 @@ function createRoom(user, name, topic) {
                     return;
                 }
                 resolve({
-                    room: getRoomInfo(newRoom)
+                    room: mapRoomInfo(newRoom)
                 });
             });
         });
@@ -104,7 +105,7 @@ function joinRoom(user, roomId) {
                     reject({errorMsg: 'this room if full'});
                     return;
                 }
-                Room.findOneAndUpdate({_id: roomId}, {'$push': {'members': getUserInfo(_user)}}, function(err, _room) {
+                Room.findOneAndUpdate({_id: roomId}, {'$push': {'members': mapUserInfo(_user)}}, function(err, _room) {
                     console.log('Room update:', _room);
                     if (err) {
                         reject({errorMsg: 'join room failed'});
@@ -119,6 +120,25 @@ function joinRoom(user, roomId) {
     });
 }
 
+function getRoomInfo(roomId) {
+    return new Promise((resolve, reject) => {
+        Room.findOneById(roomId, function(err, room) {
+            console.log('delete room:', room);
+            if (err) {
+                reject({errorMsg: 'find room failed'});
+                return;
+            }
+            if (!room) {
+                reject({errorMsg: 'find no room'});
+                return;
+            }
+            resolve({
+                room: mapRoomInfo(room)
+            });
+        });
+    });
+}
+
 function getRooms() {
     return new Promise((resolve, reject) => {
         Room.find({}, function(err, rooms) {
@@ -127,7 +147,7 @@ function getRooms() {
                 return;
             }
             resolve({
-                rooms: getRoomsInfo(rooms)
+                rooms: mapRoomsInfo(rooms)
             });
         });
     });
@@ -158,7 +178,7 @@ function exitRoom(user, roomId) {
                     reject({errorMsg: 'this room if full'});
                     return;
                 }
-                Room.findOneAndUpdate({_id: roomId}, {'$pull': {'members': getUserInfo(_user, {type: 'basic'})}}, function(err, _room) {
+                Room.findOneAndUpdate({_id: roomId}, {'$pull': {'members': mapUserInfo(_user, {type: 'basic'})}}, function(err, _room) {
                     console.log('Room update:', _room);
                     if (err) {
                         reject({errorMsg: 'join room failed'});
@@ -173,13 +193,48 @@ function exitRoom(user, roomId) {
     });
 }
 
+function extend(protoProps, staticProps) {
+    var parent = this;
+    var child;
+
+    // The constructor function for the new subclass is either defined by you
+    // (the "constructor" property in your `extend` definition), or defaulted
+    // by us to simply call the parent constructor.
+    if (protoProps && _.has(protoProps, 'constructor')) {
+        child = protoProps.constructor;
+    } else {
+        child = function(){ return parent.apply(this, arguments); };
+    }
+
+    // Add static properties to the constructor function, if supplied.
+    _.extend(child, parent, staticProps);
+
+    // Set the prototype chain to inherit from `parent`, without calling
+    // `parent` constructor function.
+    var Surrogate = function(){ this.constructor = child; };
+    Surrogate.prototype = parent.prototype;
+    child.prototype = new Surrogate();
+
+    // Add prototype properties (instance properties) to the subclass,
+    // if supplied.
+    if (protoProps) _.extend(child.prototype, protoProps);
+
+    // Set a convenience property in case the parent's prototype is needed
+    // later.
+    child.__super__ = parent.prototype;
+
+    return child;
+}
+
 module.exports = {
-    getUserInfo: getUserInfo,
-    getRoomsInfo: getRoomsInfo,
-    getRoomInfo: getRoomInfo,
+    mapUserInfo: mapUserInfo,
+    mapRoomsInfo: mapRoomsInfo,
+    mapRoomInfo: mapRoomInfo,
     createRoom: createRoom,
     deleteRoom: deleteRoom,
     joinRoom: joinRoom,
+    getRoomInfo: getRoomInfo,
     getRooms: getRooms,
-    exitRoom: exitRoom
+    exitRoom: exitRoom,
+    extend: extend
 };

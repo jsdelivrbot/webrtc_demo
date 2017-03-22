@@ -27,6 +27,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import io from 'socket.io-client';
 import $ from 'jquery';
 
 module.exports = {
@@ -39,99 +40,73 @@ module.exports = {
             formVisible: false
         };
     },
-    created: function() {
+    mounted: function() {
         if (!this.mySelf) {
             this.$router.push('/login');
         } else {
-            this.start();
+            this.init();
         }
     },
     computed: mapGetters([
         'mySelf'
     ]),
     methods: {
-        start: function() {
-            let _this = this;
-            $.ajax({
-                url: './getRooms',
-                type: 'post'
-            }).done(function(resp) {
-                if (resp.errorMsg) {
-                    _this.errorMsg = resp.errorMsg;
-                }
-                _this.rooms = resp.result;
-            }).fail(function(err) {
-                _this.errorMsg = err.errorMsg;
+        init: function() {
+            this.userId = this.mySelf.userid;
+            this.userName = this.mySelf.userName;
+            this.socket = this.openSocket();
+        },
+        openSocket: function() {
+            var _this = this;
+            //建立与服务器的socket长连接
+            var socket = io();
+
+            socket.on('connect', function() {
+                console.log('socket connect');
+                socket.emit('get.rooms');
             });
+
+            socket.on('success:get.rooms', function(rooms) {
+                console.log('success:get.rooms');
+                _this.rooms = rooms;
+            });
+
+            socket.on('success:create.room', function(room) {
+                console.log('success:create.room', room);
+                _this.rooms.push(room);
+            });
+
+            socket.on('success:delete.room', function(room) {
+                console.log('success:delete.room');
+                _this.rooms = _this.rooms.filter(function(_room) {
+                    return _room.id !== room.id;
+                });
+            });
+
+            socket.on('success:join.room', function(room) {
+                console.log('success:join.room');
+                _this.$router.push('/room/' + room.id, {params: {socket: _this.socket}});
+            });
+
+            return socket;
         },
         showAddForm: function() {
             this.formVisible = true;
         },
         createRoom: function() {
-            let _this = this;
-            $.ajax({
-                url: './createRoom',
-                type: 'post',
-                data: this.addRoomForm
-            }).done(function(resp) {
-                if (resp.errorMsg) {
-                    _this.errorMsg = resp.errorMsg;
-                    return;
-                }
-                _this.errorMsg = '';
-                if (resp.status && resp.result) {
-                    _this.formVisible = false;
-                    _this.rooms.push(resp.result);
-                    //_this.joinRoom(resp.result.id);
-                }
-            }).fail(function(err) {
-                _this.errorMsg = err.errorMsg;
-            });
+            this.socket.emit('create.room', this.addRoomForm);
         },
         deleteRoom: function(e) {
             e.stopPropagation();
-            let _this = this;
             let roomId = e.currentTarget.id;
-            $.ajax({
-                url: './deleteRoom',
-                type: 'post',
-                data: {id: roomId}
-            }).done(function(resp) {
-                if (resp.errorMsg) {
-                    _this.errorMsg = resp.errorMsg;
-                    return;
-                }
-                _this.errorMsg = '';
-                if (resp.status && resp.result) {
-                    _this.formVisible = false;
-                    _this.rooms = _this.rooms.filter(room => room.id !== roomId);
-                    //_this.joinRoom(resp.result.id);
-                }
-            }).fail(function(err) {
-                _this.errorMsg = err.errorMsg;
-            });
+            this.socket.emit('delete.room', roomId);
         },
         cancelCreateRoom: function() {
             this.formVisible = false;
         },
         joinRoom: function(e) {
-            let _this = this;
             let roomId = e.currentTarget.id;
-            $.ajax({
-                url: './joinRoom',
-                type: 'post',
-                data: {id: roomId}
-            }).done(function(resp) {
-                if (resp.errorMsg) {
-                    _this.errorMsg = resp.errorMsg;
-                }
-                if (resp.status && resp.result) {
-                    //_this.$store.dispatch('setCurrentRoom', resp.result);
-                    _this.$router.push('/room/' + resp.result.id);
-                }
-            }).fail(function(err) {
-                _this.errorMsg = err.errorMsg;
-            });
+            this.socket.emit('join.room', roomId);
         }
     }
 };

@@ -4,9 +4,9 @@ var _ = require('lodash');
 
 function mapUserInfo(user, opts) {
     let info = {
-        username: user.username,
+        userName: user.username,
         email: user.email,
-        userid: user._id
+        id: user._id
     };
     if (opts && opts.type === 'basic') {
         return info;
@@ -185,6 +185,7 @@ function exitRoom(user, roomId) {
                         return;
                     }
                     resolve({
+                        user: mapUserInfo(user),
                         room: {id: roomId}
                     });
                 });

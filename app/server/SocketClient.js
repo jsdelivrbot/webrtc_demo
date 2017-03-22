@@ -6,11 +6,12 @@ class SocketClient {
         this.socket = socket;
         this.user = user;
     }
-    createRoom(name, topic) {
+    createRoom(opts) {
+        let io = this.io;
         let socket = this.socket;
         let user = this.user;
-        Utils.createRoom(user, name, topic).then(function(data) {
-            socket.emit('success:create.room', data.room);
+        Utils.createRoom(user, opts.name, opts.topic).then(function(data) {
+            io.emit('success:create.room', data.room);
         }, function(data) {
             socket.emit('failed:create.room', {
                 errorMsg: data.errorMsg
@@ -18,10 +19,11 @@ class SocketClient {
         });
     }
     deleteRoom(roomId) {
+        let io = this.io;
         let socket = this.socket;
         let user = this.user;
         Utils.deleteRoom(user, roomId).then(function(data) {
-            socket.emit('success:delete.room', data.room);
+            io.emit('success:delete.room', data.room);
         }, function(data) {
             socket.emit('failed:delete.room', {
                 errorMsg: data.errorMsg
@@ -29,6 +31,7 @@ class SocketClient {
         });
     }
     joinRoom(roomId) {
+        let io = this.io;
         let socket = this.socket;
         let user = this.user;
         socket.join(roomId, function(err) {
@@ -39,8 +42,8 @@ class SocketClient {
                 return;
             }
             Utils.joinRoom(user, roomId).then(function(data) {
-                socket.emit('success:join.socketRoom', data.room);
-                socket.broadcast.to(roomId).emit('success:join.socketRoom', user);
+                //socket.emit('success:join.socketRoom', data.room);
+                io.to(roomId).emit('success:join.socketRoom', user);
             }, function(data) {
                 socket.emit('failed:join.room', {
                     errorMsg: data.errorMsg
@@ -59,9 +62,9 @@ class SocketClient {
                 });
                 return;
             }
-            Utils.joinRoom(user, roomId).then(function(data) {
-                socket.emit('success:leave.socketRoom', data.room);
-                io.to(roomId).emit('success:leave.socketRoom', user);
+            Utils.exitRoom(user, roomId).then(function(data) {
+                socket.emit('success:leave.socketRoom', data);
+                io.to(roomId).emit('success:leave.socketRoom', data);
             }, function(data) {
                 socket.emit('failed:leave.room', {
                     errorMsg: data.errorMsg

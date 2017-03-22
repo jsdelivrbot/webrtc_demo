@@ -35,14 +35,11 @@ module.exports = {
         if (!this.mySelf) {
             this.$router.push('/login');
         } else {
-            this.init({
-                roomId: this.$route.params.id
-            });
+            this.init();
         }
     },
     destroyed: function() {
-        this.closeSocket();
-        this.closePeer();
+        //this.socket.off();
     },
     computed: mapGetters([
         'mySelf'
@@ -50,32 +47,39 @@ module.exports = {
     methods: {
         init: function(roomId) {
             //window.URL = window.URL || window.webkitURL || window.msURL || window.oURL;
-            this.userId = this.mySelf.userid;
+            this.userId = this.mySelf.userId;
             this.userName = this.mySelf.userName;
-            this.socket = this.openSocket();
-            this.roomId = roomId;
+            this.roomId = this.$route.params.id;
+            this.socket = this.$route.params.socket;
+
+            this.initSocketEvents();
+
+            this.socket.emit('get.roomInfo', this.roomId);
             //this.peer = this.openPeer();
         },
-        openSocket: function() {
-            var _this = this;
-            //建立与服务器的socket长连接
-            var socket = io();
+        initSocketEvents: function() {
+            let _this = this;
+            let socket = this.socket;
 
-            socket.on('connect', function() {
-                console.log('socket connect');
-                socket.emit('join.socketRoom', _this.roomId);
+            socket.on('success:exit.room', function(data) {
+                console.log('success:exit.room');
+                if (data.user.userid === _this.userId) {
+                    _this.$router.go(-1);
+                } else {
+                    _this.removeMember(data.user);
+                }
             });
 
-            socket.on('success:join.socketRoom', function(roomInfo) {
-                console.log(roomInfo);
-                _this.members = roomInfo.members;
-                //_this.peer = _this.openPeer();
+            socket.on('success:join.room', function(data) {
+                console.log('success:get.roomInfo');
+                if (data.user.id !== _this.userId) {
+                    _this.addMember(data.user);
+                }
             });
 
-            socket.on('success:join.socketRoom', function(roomInfo) {
-                console.log(roomInfo);
-                _this.roomInfo = roomInfo;
-                //_this.peer = _this.openPeer();
+            socket.on('success:get.roomInfo', function(room) {
+                console.log('success:get.roomInfo');
+                _this.members = room.members;
             });
 
             // 有peer接入到webrtc服务器, 服务器通过socket将其他id实时推送到客户端
@@ -174,17 +178,17 @@ module.exports = {
                 this.socket.close();
             }
         },
-        addPerson: function(user) {
-            this.users.push(user);
+        addMember: function(user) {
+            this.members.push(user);
         },
-        removePerson: function(user) {
-            this.users = this.users.filter(function(_user) {
-                return _user.userId !== user.userId;
+        removeMember: function(user) {
+            this.members = this.members.filter(function(_user) {
+                return _user.id !== user.id;
             });
         },
         exitRoom: function(roomId) {
-            this.socket.close();
-            //this.socket.emit('exit:room', roomId);
+            //this.socket.close();
+            this.socket.emit('exit.room', roomId);
         },
         showVideo: function(id, stream) {
             var src = (window.URL && window.URL.createObjectURL) ? window.URL.createObjectURL(stream) : stream;

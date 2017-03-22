@@ -7,8 +7,8 @@ router.get('/', function(req, res, next) {
     res.render('index', {
         title: 'WebRTC',
         email: user.email,
-        username: user.username,
-        userid: user._id
+        userName: user.username,
+        id: user._id
     });
 });
 

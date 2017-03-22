@@ -20,9 +20,9 @@ const state = {
 const mutations = {
     saveMySelf (state, data) {
         state.mySelf = {
-            username: data.username,
+            userName: data.userName,
             email: data.email,
-            userid: data.userid
+            id: data.id
         };
     },
     logout (state) {

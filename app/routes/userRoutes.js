@@ -1,15 +1,15 @@
 var express = require('express');
 var router = express.Router();
-var hash = require('../bin/auth/pass').hash;
-var auth = require('../bin/auth/auth');
-var User = require('../bin/model/UserModel');
+var hash = require('../auth/pass').hash;
+var auth = require('../auth/auth');
+var User = require('../model/UserModel');
 var Utils = require('../utils/Utils');
 var _ = require('lodash');
 
 router.post('/getMySelf', function(req, res) {
     res.json({
         status: true,
-        result: req.session.user ? _.extend({loginstatus: true}, Utils.getUserInfo(req.session.user)) : {loginstatus: false}
+        result: req.session.user ? _.extend({loginstatus: true}, Utils.mapUserInfo(req.session.user)) : {loginstatus: false}
     });
 });
 
@@ -27,7 +27,7 @@ router.post('/login', function(req, res) {
                 //res.redirect('/');
                 res.json({
                     status: true,
-                    result: _.extend({loginstatus: true}, Utils.getUserInfo(user))
+                    result: _.extend({loginstatus: true}, Utils.mapUserInfo(user))
                 });
             });
         } else {
@@ -78,7 +78,7 @@ router.post('/signup', auth.userExist, function (req, res) {
                 req.session.success = 'Authenticated as ' + newUser.username;
                 res.json({
                     status: true,
-                    result: _.extend({loginstatus: true}, Utils.getUserInfo(newUser))
+                    result: _.extend({loginstatus: true}, Utils.mapUserInfo(newUser))
                 });
             });
             /*auth.authenticate(newUser.email, password, function(err, user) {

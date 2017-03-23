@@ -2,7 +2,7 @@ var socketIO = require('socket.io');
 //var cookieParserIO = require('cookie-parser-io');
 var peer = require('peer');
 var User = require('../model/UserModel');
-var ioSessionMiddleware = require('./middleware/ioSessionMiddleware');
+var ioSessionMiddleware = require('../middleware/ioSessionMiddleware');
 
 var SocketClient = require('./SocketClient');
 
@@ -18,9 +18,8 @@ function start(server) {
 
     //建立socket连接（前端在进入会议室大厅后请求）
     ioServer.on('connection', function(socket) {
+        console.log('socket connection', socket.id);
         let session = socket.handshake.session;
-        console.log('socket.handshake.session:', session);
-        console.log('socket connection,' + socket.id);
 
         let user = session.user;
 
@@ -33,16 +32,21 @@ function start(server) {
 
         let client = new SocketClient(ioServer, socket, user);
 
-        socket.on('create.room', client.createRoom);
-        socket.on('delete.room', client.deleteRoom);
-        socket.on('join.room', client.joinRoom);
-        socket.on('get.roomInfo', client.getRoomInfo);
-        socket.on('get.rooms', client.getRooms);
-        socket.on('exit.room', client.exitRoom);
-    });
+        socket.on('create.room', client.createRoom.bind(client));
+        socket.on('delete.room', client.deleteRoom.bind(client));
+        socket.on('join.room', client.joinRoom.bind(client));
+        socket.on('get.roomInfo', client.getRoomInfo.bind(client));
+        socket.on('get.rooms', client.getRooms.bind(client));
+        socket.on('exit.room', client.exitRoom.bind(client));
 
-    ioServer.on('disconnect', function(socket) {
-        console.log('socket disconnect,' + socket.id);
+        socket.on('disconnect', function() {
+            console.log('disconnect:', socket.id);
+            //client.exitRoom();
+        });
+
+        socket.on('socket-destroyed', function() {
+            console.log('socket-destroyed:', socket.id);
+        });
     });
 
     //使用登录用户id来开启peer

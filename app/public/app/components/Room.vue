@@ -17,7 +17,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import io from 'socket.io-client';
 import Peer from '../lib/peer';
 import _ from 'lodash';
 
@@ -25,34 +24,43 @@ module.exports = {
     data: function() {
         return {
             members: [],
-            socket: null,
             peer: null,
-            roomInfo: null,
+            roomInfo: {},
             roomId: ''
         };
     },
     mounted: function() {
+        if (!this.socket) {
+            this.$router.push('/rooms');
+            return;
+        }
         if (!this.mySelf) {
             this.$router.push('/login');
         } else {
             this.init();
         }
     },
-    destroyed: function() {
-        //this.socket.off();
+    beforeDestroy: function() {
+        this.exitRoom(this.roomId);
     },
     computed: mapGetters([
-        'mySelf'
+        'mySelf',
+        'socket'
     ]),
     methods: {
         init: function(roomId) {
+            let _this = this;
             //window.URL = window.URL || window.webkitURL || window.msURL || window.oURL;
             this.userId = this.mySelf.userId;
             this.userName = this.mySelf.userName;
             this.roomId = this.$route.params.id;
-            this.socket = this.$route.params.socket;
 
             this.initSocketEvents();
+
+            window.onbeforeunload = function() {
+                _this.beforeDestroy();
+                return true; // 可以阻止关闭
+            };
 
             this.socket.emit('get.roomInfo', this.roomId);
             //this.peer = this.openPeer();
@@ -63,7 +71,7 @@ module.exports = {
 
             socket.on('success:exit.room', function(data) {
                 console.log('success:exit.room');
-                if (data.user.userid === _this.userId) {
+                if (data.user.id === _this.userId) {
                     _this.$router.go(-1);
                 } else {
                     _this.removeMember(data.user);
@@ -188,6 +196,7 @@ module.exports = {
         },
         exitRoom: function(roomId) {
             //this.socket.close();
+            console.log('exit.room');
             this.socket.emit('exit.room', roomId);
         },
         showVideo: function(id, stream) {

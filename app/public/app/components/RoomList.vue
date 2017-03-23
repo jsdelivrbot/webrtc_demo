@@ -1,13 +1,13 @@
 <template>
     <div class="room-list">
         <ul>
-            <li class="c-room c-room-add" @click="showAddForm($event)">add</li>
             <li class="c-room" v-for="room in rooms" @click="joinRoom($event)" :id="room.id">
                 <!-- <video :src="user.videoStreamSrc" autoplay="" id="camera_box"></video> -->
                 <p class="room-name">name: {{room.name}}</p>
                 <p class="room-topic">topic: {{room.topic}}</p>
                 <button v-if="room.creatorEmail===mySelf.email" @click="deleteRoom($event)" :id="room.id">delete</button>
             </li>
+            <li class="c-room c-room-add" @click="showAddForm($event)">add</li>
         </ul>
         <p v-if="errorMsg" class="error-tips">{{errorMsg}}</p>
         <el-form ref="form" v-show="formVisible" :model="addRoomForm" label-position="left" label-width="180px">
@@ -28,14 +28,12 @@
 <script>
 import { mapGetters } from 'vuex';
 import io from 'socket.io-client';
-import $ from 'jquery';
 
 module.exports = {
     data: function() {
         return {
             rooms: [],
             errorMsg: '',
-            socket: null,
             addRoomForm: {},
             formVisible: false
         };
@@ -52,9 +50,11 @@ module.exports = {
     ]),
     methods: {
         init: function() {
-            this.userId = this.mySelf.userid;
+            this.userId = this.mySelf.id;
             this.userName = this.mySelf.userName;
             this.socket = this.openSocket();
+
+            this.$store.dispatch('saveSocket', this.socket);
         },
         openSocket: function() {
             var _this = this;
@@ -67,12 +67,13 @@ module.exports = {
             });
 
             socket.on('success:get.rooms', function(rooms) {
-                console.log('success:get.rooms');
+                console.log('success:get.rooms', rooms);
                 _this.rooms = rooms;
             });
 
             socket.on('success:create.room', function(room) {
                 console.log('success:create.room', room);
+                _this.hideAddForm();
                 _this.rooms.push(room);
             });
 
@@ -85,13 +86,16 @@ module.exports = {
 
             socket.on('success:join.room', function(room) {
                 console.log('success:join.room');
-                _this.$router.push('/room/' + room.id, {params: {socket: _this.socket}});
+                _this.$router.push('/room/' + room.id);
             });
 
             return socket;
         },
         showAddForm: function() {
             this.formVisible = true;
+        },
+        hideAddForm: function() {
+            this.formVisible = false;
         },
         createRoom: function() {
             this.socket.emit('create.room', this.addRoomForm);

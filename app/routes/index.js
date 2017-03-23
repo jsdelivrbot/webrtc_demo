@@ -1,15 +1,15 @@
 var express = require('express');
 var router = express.Router();
+var Utils = require('../utils/Utils');
+var _ = require('lodash');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
     var user = req.session.user || {};
-    res.render('index', {
-        title: 'WebRTC',
-        email: user.email,
-        userName: user.username,
-        id: user._id
-    });
+    console.log('user:' + user);
+    res.render('index', _.extend({
+        title: 'WebRTC'
+    }, Utils.mapUserInfo(user)));
 });
 
 /*router.get('/', function (req, res) {

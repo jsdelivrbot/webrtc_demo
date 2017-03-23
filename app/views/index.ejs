@@ -3,8 +3,17 @@
 <head>
 	<meta charset="UTF-8">
 	<title></title>
-<link href="../public/build/styles/index.css" rel="stylesheet"></head>
+<link href="/build/styles/index.css" rel="stylesheet"></head>
+<script>
+    window.BACKEND_VAR = {
+        user: {
+            userName: '<%=userName%>',
+            id: '<%=id%>',
+            email: '<%=email%>'
+        }
+    };
+</script>
 <body>
 	<div id="app"></div>
-<script type="text/javascript" src="../public/build/index.js"></script></body>
+<script type="text/javascript" src="/build/index.js"></script></body>
 </html>

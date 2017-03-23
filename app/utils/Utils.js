@@ -64,7 +64,7 @@ function createRoom(user, name, topic) {
 function deleteRoom(user, roomId) {
     return new Promise((resolve, reject) => {
         Room.findOneAndRemove({_id: roomId, creatorName: user.email}, function(err, room) {
-            console.log('delete room:', room);
+            //console.log('delete room:', room);
             if (err) {
                 reject({errorMsg: 'delete room failed'});
                 return;
@@ -83,7 +83,7 @@ function deleteRoom(user, roomId) {
 function joinRoom(user, roomId) {
     return new Promise((resolve, reject) => {
         User.findOneAndUpdate({email: user.email}, {'$push': {'rooms': roomId}}, function(err, _user) {
-            console.log('user update:', _user);
+            //console.log('user update:', _user);
             if (err) {
                 reject({errorMsg: 'update user info failed'});
                 return;
@@ -106,7 +106,7 @@ function joinRoom(user, roomId) {
                     return;
                 }
                 Room.findOneAndUpdate({_id: roomId}, {'$push': {'members': mapUserInfo(_user)}}, function(err, _room) {
-                    console.log('Room update:', _room);
+                    //console.log('Room update:', _room);
                     if (err) {
                         reject({errorMsg: 'join room failed'});
                         return;
@@ -122,7 +122,7 @@ function joinRoom(user, roomId) {
 
 function getRoomInfo(roomId) {
     return new Promise((resolve, reject) => {
-        Room.findOneById(roomId, function(err, room) {
+        Room.findById(roomId, function(err, room) {
             console.log('delete room:', room);
             if (err) {
                 reject({errorMsg: 'find room failed'});

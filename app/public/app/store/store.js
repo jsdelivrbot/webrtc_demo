@@ -9,7 +9,7 @@ var user = window.BACKEND_VAR.user;
 // each Vuex instance is just a single state tree.
 const state = {
     mySelf: (user.email ? user : ''),
-    currentRoom: ''
+    socket: null
 };
 
 // mutations are operations that actually mutates the state.
@@ -19,17 +19,16 @@ const state = {
 // for debugging purposes.
 const mutations = {
     saveMySelf (state, data) {
-        state.mySelf = {
-            userName: data.userName,
-            email: data.email,
-            id: data.id
-        };
+        state.mySelf = data;
     },
     logout (state) {
         state.mySelf = '';
     },
     setCurrentRoom (state, data) {
         state.currentRoom = data;
+    },
+    saveSocket (state, socket) {
+        state.socket = socket;
     }
 };
 
@@ -103,15 +102,15 @@ const actions = {
             });
         });
     },
-    setCurrentRoom ({ commit, state }, data) {
-        commit('setCurrentRoom', data);
+    saveSocket ({ commit, state }, socket) {
+        commit('saveSocket', socket);
     }
 };
 
 // getters are functions
 const getters = {
     mySelf: state => state.mySelf,
-    currentRoom: state => state.currentRoom
+    socket: state => state.socket
 };
 
 // A Vuex instance is created by combining the state, mutations, actions,

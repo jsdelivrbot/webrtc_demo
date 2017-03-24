@@ -1,10 +1,11 @@
 <template>
     <div class="room-list">
         <ul>
-            <li class="c-room" v-for="room in rooms" @click="joinRoom($event)" :id="room.id">
+            <li class="c-room" v-for="room in rooms" @click="gotoRoom($event)" :id="room.id">
                 <!-- <video :src="user.videoStreamSrc" autoplay="" id="camera_box"></video> -->
                 <p class="room-name">name: {{room.name}}</p>
                 <p class="room-topic">topic: {{room.topic}}</p>
+                <!-- <p class="room-email">creatorEmail: {{room.creatorEmail}}, mySelfEmail: {{mySelf.email}}</p> -->
                 <button v-if="room.creatorEmail===mySelf.email" @click="deleteRoom($event)" :id="room.id">delete</button>
             </li>
             <li class="c-room c-room-add" @click="showAddForm($event)">add</li>
@@ -45,21 +46,32 @@ module.exports = {
             this.init();
         }
     },
+    beforeDestroy: function() {
+        if (this.socket) {
+            this.socket.off('connect');
+            this.socket.off('success:get.rooms');
+            this.socket.off('success:create.room');
+            this.socket.off('success:delete.room');
+        }
+    },
     computed: mapGetters([
-        'mySelf'
+        'mySelf',
+        'socket'
     ]),
     methods: {
         init: function() {
             this.userId = this.mySelf.id;
             this.userName = this.mySelf.userName;
-            this.socket = this.openSocket();
-
-            this.$store.dispatch('saveSocket', this.socket);
+            if (!this.socket) {
+                this.$store.dispatch('saveSocket', io());
+            } else {
+                this.socket.emit('get.rooms');
+            }
+            this.initSocketListeners();
         },
-        openSocket: function() {
+        initSocketListeners: function() {
             var _this = this;
-            //建立与服务器的socket长连接
-            var socket = io();
+            let socket = this.socket;
 
             socket.on('connect', function() {
                 console.log('socket connect');
@@ -84,11 +96,6 @@ module.exports = {
                 });
             });
 
-            socket.on('success:join.room', function(room) {
-                console.log('success:join.room');
-                _this.$router.push('/room/' + room.id);
-            });
-
             return socket;
         },
         showAddForm: function() {
@@ -108,9 +115,9 @@ module.exports = {
         cancelCreateRoom: function() {
             this.formVisible = false;
         },
-        joinRoom: function(e) {
+        gotoRoom: function(e) {
             let roomId = e.currentTarget.id;
-            this.socket.emit('join.room', roomId);
+            this.$router.push('/room/' + roomId);
         }
     }
 };

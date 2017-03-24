@@ -52,7 +52,7 @@ class SocketClient {
             Utils.joinRoom(user, roomId).then(function(data) {
                 console.log('success:join.room');
                 //socket.emit('success:join.socketRoom', data.room);
-                io.to(roomId).emit('success:join.room', Utils.mapUserInfo(user));
+                io.to(roomId).emit('success:join.room', data); //room and user
             }, function(data) {
                 console.log('failed:join.room', data);
                 socket.emit('failed:join.room', {
@@ -76,7 +76,7 @@ class SocketClient {
             Utils.exitRoom(user, roomId).then(function(data) {
                 console.log('success:leave.socketRoom');
                 socket.emit('success:leave.socketRoom', data);
-                io.to(roomId).emit('success:leave.socketRoom', data);
+                io.to(roomId).emit('success:leave.socketRoom', data); //room and user
             }, function(data) {
                 console.log('failed:leave.room,', data);
                 socket.emit('failed:leave.room', {
@@ -88,9 +88,9 @@ class SocketClient {
     getRoomInfo(roomId) {
         console.log('SocketClient::getRoomInfo, roomId:', roomId);
         let socket = this.socket;
-        Utils.getRoomInfo(this.user, roomId).then(function(data) {
+        Utils.getRoomInfo(roomId).then(function(data) {
             console.log('success:get.roomInfo');
-            socket.emit('success:get.roomInfo');
+            socket.emit('success:get.roomInfo', data.room);
         }, function(data) {
             console.log('failed:get.roomInfo,', data);
             socket.emit('failed:get.roomInfo', {

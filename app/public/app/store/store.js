@@ -28,6 +28,9 @@ const mutations = {
         state.currentRoom = data;
     },
     saveSocket (state, socket) {
+        if (!socket) {
+            state.socket.close();
+        }
         state.socket = socket;
     }
 };
@@ -58,10 +61,10 @@ function loginOrSign (url, data, commit) {
 // asynchronous operations.
 const actions = {
     login ({ commit, state }, formData) {
-        return loginOrSign('./login', formData, commit);
+        return loginOrSign('/login', formData, commit);
     },
     signup ({ commit, state }, formData) {
-        return loginOrSign('./signup', formData, commit);
+        return loginOrSign('/signup', formData, commit);
     },
     getMySelf ({ commit, state }, update) {
         return new Promise((resolve, reject) => {
@@ -69,7 +72,7 @@ const actions = {
                 resolve(state.mySelf);
                 return;
             }
-            $.ajax('./getMySelf', {
+            $.ajax('/getMySelf', {
                 type: 'post'
             }).done(function(resp) {
                 if (resp.status) {
@@ -91,8 +94,9 @@ const actions = {
         });
     },
     logout ({ commit, state }) {
+        commit('saveSocket', null);
         return new Promise((resolve, reject) => {
-            $.ajax('./logout', {
+            $.ajax('/logout', {
                 type: 'post'
             }).then(function(resp) {
                 if (resp.status) {

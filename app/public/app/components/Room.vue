@@ -19,6 +19,7 @@
 import { mapGetters } from 'vuex';
 import Peer from '../lib/peer';
 import _ from 'lodash';
+import io from 'socket.io-client';
 
 module.exports = {
     data: function() {
@@ -30,17 +31,19 @@ module.exports = {
         };
     },
     mounted: function() {
-        if (!this.socket) {
-            this.$router.push('/rooms');
-            return;
-        }
-        if (!this.mySelf) {
-            this.$router.push('/login');
-        } else {
-            this.init();
-        }
+        this.init();
     },
+    // beforeRouteLeave: function(to, from, next) {
+    //     alert('you are in chat room, please click quit room!');
+    //     return;
+    // },
     beforeDestroy: function() {
+        if (this.socket) {
+            this.socket.off('failed:auth');
+            this.socket.off('success:join.room');
+            this.socket.off('success:exit.room');
+            this.socket.off('success:get.roomInfo');
+        }
         this.exitRoom(this.roomId);
     },
     computed: mapGetters([
@@ -48,12 +51,16 @@ module.exports = {
         'socket'
     ]),
     methods: {
-        init: function(roomId) {
+        init: function() {
             let _this = this;
             //window.URL = window.URL || window.webkitURL || window.msURL || window.oURL;
-            this.userId = this.mySelf.userId;
+            this.userId = this.mySelf.id;
             this.userName = this.mySelf.userName;
             this.roomId = this.$route.params.id;
+
+            if (!this.socket) {
+                this.$store.dispatch('saveSocket', io());
+            }
 
             this.initSocketEvents();
 
@@ -61,13 +68,27 @@ module.exports = {
                 _this.beforeDestroy();
                 return true; // 可以阻止关闭
             };
-
-            this.socket.emit('get.roomInfo', this.roomId);
+            
+            this.socket.emit('join.room', this.roomId);
+            //this.socket.emit('get.roomInfo', this.roomId);
             //this.peer = this.openPeer();
         },
         initSocketEvents: function() {
             let _this = this;
             let socket = this.socket;
+
+            socket.on('failed:auth', function() {
+                _this.$router.push('rooms');
+            });
+
+            socket.on('success:join.room', function(data) {
+                console.log('success:join.room');
+                if (data.user.id !== _this.userId) {
+                    _this.addMember(data.user);
+                } else {
+                    socket.emit('get.roomInfo', _this.roomId);
+                }
+            });
 
             socket.on('success:exit.room', function(data) {
                 console.log('success:exit.room');
@@ -78,16 +99,10 @@ module.exports = {
                 }
             });
 
-            socket.on('success:join.room', function(data) {
-                console.log('success:get.roomInfo');
-                if (data.user.id !== _this.userId) {
-                    _this.addMember(data.user);
-                }
-            });
-
             socket.on('success:get.roomInfo', function(room) {
-                console.log('success:get.roomInfo');
+                console.log('success:get.roomInfo', room);
                 _this.members = room.members;
+                //socket.emit('join.room', _this.roomId);
             });
 
             // 有peer接入到webrtc服务器, 服务器通过socket将其他id实时推送到客户端
@@ -179,11 +194,6 @@ module.exports = {
         closePeer: function() {
             if (this.peer) {
                 this.peer.disconnect();
-            }
-        },
-        closeSocket: function() {
-            if (this.socket) {
-                this.socket.close();
             }
         },
         addMember: function(user) {

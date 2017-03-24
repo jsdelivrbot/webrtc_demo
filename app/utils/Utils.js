@@ -105,13 +105,14 @@ function joinRoom(user, roomId) {
                     reject({errorMsg: 'this room if full'});
                     return;
                 }
-                Room.findOneAndUpdate({_id: roomId}, {'$push': {'members': mapUserInfo(_user)}}, function(err, _room) {
+                Room.findOneAndUpdate({_id: roomId}, {'$push': {'members': mapUserInfo(_user, {type: 'basic'})}}, function(err, _room) {
                     //console.log('Room update:', _room);
                     if (err) {
                         reject({errorMsg: 'join room failed'});
                         return;
                     }
                     resolve({
+                        user: mapUserInfo(_user, {type: 'basic'}),
                         room: {id: roomId}
                     });
                 });
@@ -122,8 +123,9 @@ function joinRoom(user, roomId) {
 
 function getRoomInfo(roomId) {
     return new Promise((resolve, reject) => {
-        Room.findById(roomId, function(err, room) {
-            console.log('delete room:', room);
+        console.log('getRoomInfo:', roomId);
+        Room.findOne({_id: roomId}, function(err, room) {
+            //console.log('find room:', room);
             if (err) {
                 reject({errorMsg: 'find room failed'});
                 return;
@@ -156,7 +158,7 @@ function getRooms() {
 function exitRoom(user, roomId) {
     return new Promise((resolve, reject) => {
         User.findOneAndUpdate({email: user.email}, {'$pull': {'rooms': roomId}}, function(err, _user) {
-            console.log('user update:', _user);
+            //console.log('user update:', _user);
             if (err) {
                 reject({errorMsg: 'update user info failed'});
                 return;

@@ -1,26 +1,32 @@
 <template>
     <div id="login">
-        <form>
-            <label for="email">Email</label>
-            <input id="email" type="text" name="email"/>
-            <label for="username">User Name</label>
-            <input id="username" type="text" name="username"/>
-            <label for="password">Password</label>
-            <input id="password" type="password" name="password"/>
-            <input @click="requestLogin($event)" type="button" value="Log In"/>
-        </form>
-        <router-link to="/signup">没有账户？加入我们</router-link>
-        <p class="error-tip">{{errorMsg}}</p>
+        <el-form ref="form" :model="loginForm" label-position="left" label-width="100px">
+            <el-form-item label="Email" prop="email">
+                <el-input v-model="loginForm.email"></el-input>
+            </el-form-item>
+            <el-form-item label="User Name" prop="username">
+                <el-input v-model="loginForm.username"></el-input>
+            </el-form-item>
+            <el-form-item label="password" prop="password">
+                <el-input v-model="loginForm.password"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="requestLogin">Log In</el-button>
+            </el-form-item>
+            <router-link to="/signup">没有账户？加入我们</router-link>
+            <p class="error-tip">{{errorMsg}}</p>
+        </el-form>
     </div>
 </template>
 
 <script>
     import { mapGetters } from 'vuex';
-    import $ from 'jquery';
+    import style from '../style/login.less';
 
     module.exports = {
         data: function() {
             return {
+                loginForm: {},
                 errorMsg: ''
             };
         },
@@ -35,8 +41,7 @@
         methods: {
             requestLogin: function(e) {
                 let _this = this;
-                let formData = $(this.$el).find('form').serialize();
-                this.$store.dispatch('login', formData).then(function(resp) {
+                this.$store.dispatch('login', this.loginForm).then(function(resp) {
                     _this.$router.push('/rooms');
                 }, function(err) {
                     _this.errorMsg = err.errorMsg;

@@ -8,6 +8,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import Profile from './Profile.vue';
+import style from '../style/common.less';
 
 module.exports = {
     data: function() {

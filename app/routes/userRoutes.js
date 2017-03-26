@@ -14,13 +14,23 @@ router.post('/getMySelf', function(req, res) {
 });
 
 router.post('/login', function(req, res) {
+    console.log('userRouter::login enter');
     auth.authenticate(req.body.email, req.body.password, function(err, user) {
+        console.log('user:', user);
         if (err) {
-            res.status(500);
+            console.log('find user error:', err);
+            res.json({
+                status: true,
+                result: {
+                    loginstatus: false,
+                    errorMsg: err.errorMsg
+                }
+            });
             return;
         }
         if (user) {
             req.session.regenerate(function() {
+                console.log('regenerate session end:');
                 req.session.user = user;
                 console.log('login:', user);
                 req.session.success = 'Authenticated as ' + user.username;// + ' click to <a href="/logout">logout</a>. You may now access <a href="/restricted">/restricted</a>.';
@@ -31,6 +41,7 @@ router.post('/login', function(req, res) {
                 });
             });
         } else {
+            console.log('no user found!');
             req.session.error = 'Authentication failed, please check your username and password.';
             res.json({
                 status: true,
@@ -52,6 +63,7 @@ router.post('/logout', function (req, res) {
 });
 
 router.post('/signup', auth.userExist, function (req, res) {
+    console.log('userRouter::signup enter');
     if (req.session.error) {
         res.json({
             status: true,
@@ -65,6 +77,7 @@ router.post('/signup', auth.userExist, function (req, res) {
     var email = req.body.email;
 
     hash(password, function (err, salt, hash) {
+        console.log('hash password end');
         if (err) throw err;
         User.create({
             email: email,
@@ -72,8 +85,10 @@ router.post('/signup', auth.userExist, function (req, res) {
             salt: salt,
             hash: hash
         }, function (err, newUser) {
+            console.log('create user end:', newUser);
             if (err) throw err;
             req.session.regenerate(function() {
+                console.log('regenerate session end:');
                 req.session.user = newUser;
                 req.session.success = 'Authenticated as ' + newUser.username;
                 res.json({

@@ -1,0 +1,27 @@
+#login, #sign {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background: url('./img/timg.jpg') no-repeat;
+	background-size: 100% 100%;
+	form {
+		width: 500px;
+		height: 260px;
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		margin: auto;
+		input {
+			transition: background 0.5s;
+			border: none;
+			background: rgba(255,255,255,0.2);
+			&:focus {
+				background: rgba(255,255,255,0.8);
+			}
+		}
+	}
+}

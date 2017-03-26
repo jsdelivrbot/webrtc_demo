@@ -7,14 +7,20 @@ module.exports = {
 
         User.findOne({email: email}, function(err, user) {
             if (user) {
-                if (err) return fn(new Error('cannot find user'));
+                if (err) return fn({
+                    errorMsg: 'find user error'
+                });
                 hash(pass, user.salt, function(err, _hash) {
                     if (err) return fn(err);
                     if (_hash.toString() === user.hash) return fn(null, user);
-                    fn(new Error('invalid password'));
+                    fn({
+                        errorMsg: 'invalid password'
+                    });
                 });
             } else {
-                return fn(new Error('cannot find user'));
+                return fn({
+                    errorMsg: 'no user exit'
+                });
             }
         });
     },

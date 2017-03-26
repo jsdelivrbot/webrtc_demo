@@ -22,7 +22,7 @@ console.log(process.env.NODE_ENV);
 
 var plugins = [
     //new CommonsChunkPlugin('scripts/common' + afterfix, ['index', 'vender']),
-    new ExtractTextPlugin('styles/[name].css'),
+    new ExtractTextPlugin('[name].css'),
     // new DllReferencePlugin({
     //     context: __dirname,
     //     manifest: require(path.resolve(__dirname, libPath + 'manifest-react.json'))
@@ -95,11 +95,21 @@ module.exports = {
                 use: 'css-loader'
             })
         }, {
-            test: /\.(woff|svg|eot|ttf|png|jpg)\??.*$/,
-            /*test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,*/
+            test: /\.less$/,
+            use: ExtractTextPlugin.extract({
+                fallback: 'style-loader',
+                use: [{
+                    loader: "css-loader"
+                }, {
+                    loader: "less-loader"
+                }]
+            })
+        }, {
+            test: /\.(woff2?|svg|eot|ttf|otf|png|jpg)(\?.*)?$/,
             loader: 'url-loader',
             query: {
-                limit: 8
+                limit: 1000,
+                name: 'imgs/[name].[ext]'
             }
         }]
     },

@@ -6,10 +6,9 @@
             <h3>{{roomInfo.creatorName}}</h3>
         </div>
         <ul>
-            <li class="c-member" v-for="member in members" @click="requestVideo($event)" :id="member.peerId">
+            <li class="c-member" v-for="member in members" @click="requestVideo($event)" :id="member.id">
                 <!-- <video :src="user.videoStreamSrc" autoplay="" id="camera_box"></video> -->
-                <p class="room-name">name: {{room.name}}</p>
-                <p class="room-topic">topic: {{room.topic}}</p>
+                <p class="member-name">name: {{member.userName}}</p>
             </li>
         </ul>
     </div>
@@ -101,6 +100,7 @@ module.exports = {
 
             socket.on('success:get.roomInfo', function(room) {
                 console.log('success:get.roomInfo', room);
+                _this.roomInfo = room;
                 _this.members = room.members;
                 //socket.emit('join.room', _this.roomId);
             });

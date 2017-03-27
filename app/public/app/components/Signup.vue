@@ -1,26 +1,36 @@
 <template>
     <div id="Signup">
-        <form>
-            <label for="email">Email</label>
-            <input id="email" type="text" name="email"/>
-            <label for="username">User Name</label>
-            <input id="username" type="text" name="username" pattern="[A-z]{3}" required="required" />
-            <label for="password">Password</label>
-            <input id="password" type="password" name="password"/>
-            <input @click="requestSignup($event)" type="button" value="Sign Up"/>
-        </form>
-        <router-link to="/login">已有账户，请登录</router-link>
-        <p class="error-tip">{{errorMsg}}</p>
+        <el-form ref="form" :rules="rules" :model="signUpForm" label-position="left" label-width="100px">
+            <router-link to="/login">已有账户，请登录</router-link>
+            <el-form-item label="Email" prop="email">
+                <el-input v-model="signUpForm.email" placeholder="请输入有效email账户"></el-input>
+            </el-form-item>
+            <el-form-item label="Nick Name" prop="username">
+                <el-input v-model="signUpForm.username" placeholder="请输入您的昵称"></el-input>
+            </el-form-item>
+            <el-form-item label="password" prop="password">
+                <el-input v-model="signUpForm.password" type="password" placeholder="请输入7位以上中英混合密码"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="requestSignup">Sign Up</el-button>
+            </el-form-item>
+            <p class="error-tip">{{errorMsg}}</p>
+        </el-form>
     </div>
 </template>
 
 <script>
     import { mapGetters } from 'vuex';
-    import $ from 'jquery';
+    import style from '../style/login.less';
 
     module.exports = {
         data: function() {
             return {
+                signUpForm: {
+                    email: '',
+                    username: '',
+                    password: ''
+                },
                 errorMsg: ''
             };
         },
@@ -35,8 +45,7 @@
         methods: {
             requestSignup: function(e) {
                 let _this = this;
-                let formData = $(this.$el).find('form').serialize();
-                this.$store.dispatch('signup', formData).then(function(resp) {
+                this.$store.dispatch('signup', this.signUpForm).then(function(resp) {
                     _this.$router.push('/');
                 }, function(err) {
                     _this.errorMsg = err.errorMsg;

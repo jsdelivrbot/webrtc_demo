@@ -6,7 +6,7 @@
                 <el-input v-model="loginForm.email" placeholder="请输入有效email账户"></el-input>
             </el-form-item>
             <el-form-item label="password" prop="password">
-                <el-input v-model="loginForm.password" type="password" placeholder="请输入7位以上中英混合密码"></el-input>
+                <el-input v-model="loginForm.password" type="password" placeholder="请输入7位以上数字字母混合密码"></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="requestLogin">Log In</el-button>
@@ -19,26 +19,18 @@
 <script>
     import { mapGetters } from 'vuex';
     import style from '../style/login.less';
+    import validate from '../utils/validate';
 
     module.exports = {
         data: function() {
-            var validatePass = function(str) {
-                return str.match(/([A-Z]|[\d]){7}?/);
-            };
             return {
                 loginForm: {
                     email: '',
                     password: ''
                 },
                 rules: {
-                    email: [
-                        { required: true, message: '请输入email', trigger: 'blur' },
-                        { type: 'email', message: '请输入有效email账户', trigger: 'blur,change' }
-                    ],
-                    password: [
-                        { required: true, message: '请输入密码', trigger: 'blur' },
-                        { validate: validatePass, message: '请输入7位以上中英混合密码', trigger: 'blur' }
-                    ]
+                    email: validate.email,
+                    password: validate.password
                 },
                 errorMsg: ''
             };

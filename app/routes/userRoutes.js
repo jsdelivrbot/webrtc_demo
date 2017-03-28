@@ -3,13 +3,16 @@ var router = express.Router();
 var hash = require('../auth/pass').hash;
 var auth = require('../auth/auth');
 var User = require('../model/UserModel');
-var Utils = require('../utils/Utils');
+var commonUtils = require('commonUtils');
 var _ = require('lodash');
+
+var mapUserInfo = commonUtils.mapUserInfo;
+var checkIfExit = commonUtils.checkIfExit;
 
 router.post('/getMySelf', function(req, res) {
     res.json({
         status: true,
-        result: req.session.user ? _.extend({loginstatus: true}, Utils.mapUserInfo(req.session.user)) : {loginstatus: false}
+        result: req.session.user ? _.extend({loginstatus: true}, mapUserInfo(req.session.user)) : {loginstatus: false}
     });
 });
 
@@ -20,7 +23,7 @@ router.post('/login', function(req, res) {
         if (err) {
             console.log('find user error:', err);
             res.json({
-                status: true,
+                status: false,
                 result: {
                     loginstatus: false,
                     errorMsg: err.errorMsg
@@ -37,7 +40,7 @@ router.post('/login', function(req, res) {
                 //res.redirect('/');
                 res.json({
                     status: true,
-                    result: _.extend({loginstatus: true}, Utils.mapUserInfo(user))
+                    result: _.extend({loginstatus: true}, mapUserInfo(user))
                 });
             });
         } else {
@@ -93,7 +96,7 @@ router.post('/signup', auth.userExist, function (req, res) {
                 req.session.success = 'Authenticated as ' + newUser.username;
                 res.json({
                     status: true,
-                    result: _.extend({loginstatus: true}, Utils.mapUserInfo(newUser))
+                    result: _.extend({loginstatus: true}, mapUserInfo(newUser))
                 });
             });
             /*auth.authenticate(newUser.email, password, function(err, user) {
@@ -113,6 +116,52 @@ router.post('/signup', auth.userExist, function (req, res) {
             });*/
         });
     });
+});
+
+router.post('/checkEmail', function (req, res) {
+    let email = req.body.email;
+    checkIfExit({email: email}, User)
+        .then(function(result) {
+            if (result) {
+                res.json({
+                    status: true
+                });
+            } else {
+                res.json({
+                    status: false,
+                    errorMsg: 'email is exist'
+                });
+                return;
+            }
+        }, function() {
+            res.json({
+                status: false,
+                errorMsg: 'check email failed'
+            });
+        });
+});
+
+router.post('/checkUsername', function (req, res) {
+    let username = req.body.username;
+    checkIfExit({username: username}, User)
+        .then(function(result) {
+            if (result) {
+                res.json({
+                    status: true
+                });
+            } else {
+                res.json({
+                    status: false,
+                    errorMsg: 'username is exist'
+                });
+                return;
+            }
+        }, function() {
+            res.json({
+                status: false,
+                errorMsg: 'check username failed'
+            });
+        });
 });
 
 module.exports = router;

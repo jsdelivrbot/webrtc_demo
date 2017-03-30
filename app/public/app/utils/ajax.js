@@ -7,4 +7,4 @@ $.ajaxSetup({
     }
 });
 
-module.exports = $.ajax;
+export default $.ajax;

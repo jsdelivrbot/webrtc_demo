@@ -1,4 +1,5 @@
 import ajax from './ajax';
+import commonUtils from './commonUtils';
 
 function validatePass (rule, str, callback) {
     let result = str.match(/^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{7,}$/);
@@ -10,28 +11,20 @@ function validatePass (rule, str, callback) {
 }
 
 function checkEmail(rule, str, callback) {
-    return ajax({
-        url: '/checkEmail',
-        data: {
-            email: str
-        }
-    }).done(function(resp) {
-        if (resp.status) {
-            callback();
-        } else {
-            callback(new Error(resp.errorMsg));
-        }
-    }).fail(function(resp, st, msg) {
-        callback(new Error(msg));
-    });
+    checkRemote('email', str, callback);
 }
 
 function checkUsername(rule, str, callback) {
-    return ajax({
-        url: '/checkUsername',
-        data: {
-            username: str
-        }
+    checkRemote('username', str, callback);
+}
+
+function checkRemote(key, value, callback) {
+    let data = {
+        [key]: value
+    };
+    ajax({
+        url: '/check' + commonUtils.capitalize(key),
+        data: data
     }).done(function(resp) {
         if (resp.status) {
             callback();
@@ -43,7 +36,7 @@ function checkUsername(rule, str, callback) {
     });
 }
 
-module.exports = {
+export default {
     email: [
         { required: true, message: '请输入email', trigger: 'blur' },
         { type: 'email', message: '请输入有效email账户', trigger: 'blur,change' },

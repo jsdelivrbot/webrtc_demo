@@ -22,7 +22,7 @@
 <script>
     import { mapGetters } from 'vuex';
     import style from '../style/login.less';
-    import validate from '../utils/validate';
+    import validateUtils from '../utils/validateUtils';
 
     module.exports = {
         data: function() {
@@ -33,9 +33,9 @@
                     password: ''
                 },
                 rules: {
-                    email: validate.email,
-                    username: validate.username,
-                    password: validate.password
+                    email: validateUtils.email,
+                    username: validateUtils.username,
+                    password: validateUtils.password
                 },
                 errorMsg: ''
             };

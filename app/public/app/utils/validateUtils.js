@@ -49,5 +49,11 @@ export default {
     username: [
         { required: true, message: '请输入用户昵称', trigger: 'blur' },
         { validate: checkUsername, trigger: 'blur,change' }
+    ],
+    roomName: [
+        { required: true, message: '请输入房间名称', trigger: 'blur' }
+    ],
+    roomTopic: [
+        { required: true, message: '请输入房间主题', trigger: 'blur' }
     ]
 };

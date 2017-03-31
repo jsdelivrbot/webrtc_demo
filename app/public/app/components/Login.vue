@@ -1,6 +1,6 @@
 <template>
     <div id="login">
-        <el-form ref="form" :model="loginForm" label-position="left" label-width="100px">
+        <el-form ref="form" :rules="rules" :model="loginForm" label-position="left" label-width="100px">
             <router-link to="/signup">没有账户？加入我们</router-link>
             <el-form-item label="Email" prop="email">
                 <el-input v-model="loginForm.email" placeholder="请输入有效email账户"></el-input>

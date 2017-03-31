@@ -8,32 +8,39 @@
                 <!-- <p class="room-email">creatorEmail: {{room.creatorEmail}}, mySelfEmail: {{mySelf.email}}</p> -->
                 <button v-if="room.creatorEmail===mySelf.email" @click="deleteRoom($event)" :id="room.id">delete</button>
             </li>
-            <li class="c-room c-room-add" @click="showAddForm($event)">add</li>
+            <li class="c-room c-room-add" @click="showAddForm">add</li>
         </ul>
         <p v-if="errorMsg" class="error-tips">{{errorMsg}}</p>
-        <el-form ref="form" v-show="formVisible" :model="addRoomForm" label-position="left" label-width="180px">
-            <el-form-item label="名称" prop="name">
-                <el-input v-model="addRoomForm.name"></el-input>
-            </el-form-item>
-            <el-form-item label="主题" prop="topic">
-                <el-input v-model="addRoomForm.topic"></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="createRoom">提交</el-button>
-                <el-button type="primary" @click="cancelCreateRoom">取消</el-button>
-            </el-form-item>
-        </el-form>
+        <el-dialog title="收货地址" v-model="dialogFormVisible">
+            <el-form ref="form" :rules="rules" :model="addRoomForm" label-position="left" label-width="180px">
+                <el-form-item label="名称" prop="name">
+                    <el-input v-model="addRoomForm.name"></el-input>
+                </el-form-item>
+                <el-form-item label="主题" prop="topic">
+                    <el-input v-model="addRoomForm.topic"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="cancelCreateRoom">取 消</el-button>
+                <el-button type="primary" @click="createRoom">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 import io from 'socket.io-client';
+import validateUtils from '../utils/validateUtils';
 
 module.exports = {
     data: function() {
         return {
             rooms: [],
+            rules: {
+                name: validateUtils.roomName,
+                topic: validateUtils.roomTopic
+            },
             errorMsg: '',
             addRoomForm: {},
             formVisible: false
@@ -99,10 +106,10 @@ module.exports = {
             return socket;
         },
         showAddForm: function() {
-            this.formVisible = true;
+            this.dialogFormVisible = true;
         },
         hideAddForm: function() {
-            this.formVisible = false;
+            this.dialogFormVisible = false;
         },
         createRoom: function() {
             this.socket.emit('create.room', this.addRoomForm);
@@ -113,7 +120,7 @@ module.exports = {
             this.socket.emit('delete.room', roomId);
         },
         cancelCreateRoom: function() {
-            this.formVisible = false;
+            this.dialogFormVisible = false;
         },
         gotoRoom: function(e) {
             let roomId = e.currentTarget.id;

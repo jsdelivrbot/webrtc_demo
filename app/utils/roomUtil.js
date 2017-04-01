@@ -16,6 +16,7 @@ function mapRoomInfo(room) {
         topic: room.topic,
         creatorEmail: room.creatorEmail,
         creatorName: room.creatorName,
+        createTime: room.createTime,
         members: room.members
     };
 }
@@ -32,7 +33,7 @@ function createRoom(user, name, topic) {
                 topic: topic,
                 creatorName: user.username,
                 creatorEmail: user.email,
-                //status: 'created',
+                createTime: (new Date()).getTime(),
                 members: [],
                 maxCount: 6
             }, function(err, newRoom) {

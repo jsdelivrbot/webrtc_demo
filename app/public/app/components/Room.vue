@@ -19,6 +19,7 @@ import { mapGetters } from 'vuex';
 import Peer from '../lib/peer';
 import _ from 'lodash';
 import io from 'socket.io-client';
+import ss from 'socket.io-stream';
 
 module.exports = {
     data: function() {
@@ -71,6 +72,12 @@ module.exports = {
             this.socket.emit('join.room', this.roomId);
             //this.socket.emit('get.roomInfo', this.roomId);
             //this.peer = this.openPeer();
+        },
+        createSocket: function() {
+            let socket = io();
+            this.stream = ss.createStream();
+
+            return socket;
         },
         initSocketEvents: function() {
             let _this = this;
@@ -229,7 +236,7 @@ module.exports = {
             });
         },
         openVideo: function(successFn, failFn) {
-            //var _this = this;
+            var _this = this;
             //视频连接
             var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
             getUserMedia = getUserMedia.bind(navigator);
@@ -238,6 +245,9 @@ module.exports = {
                 audio: true
             }, function(stream) {
                 successFn ? successFn(stream) : null;
+                //send stream to socketserver
+                ss(_this.socket).emit('realTimeVideo', _this.stream, {name: _this.mySelf.userName});
+                ss.createBlobReadStream(stream).pipe(_this.stream);
                 //var call = _this.peer.call(toId, stream);
                 //_this.showVideo(_this.userId, stream);
             }, function(err) {

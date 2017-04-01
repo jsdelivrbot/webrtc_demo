@@ -7,7 +7,7 @@ var RoomSchema = new mongoose.Schema({
     topic: String,
     creatorName: String,
     creatorEmail: String,
-    //status: String,
+    createTime: Number,
     members: Array,
     maxCount: Number
 });

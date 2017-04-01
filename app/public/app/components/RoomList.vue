@@ -1,31 +1,35 @@
 <template>
     <div class="room-list">
-        <ul>
-            <li class="c-room" v-for="room in rooms" @click="gotoRoom($event)" :id="room.id">
-                <!-- <video :src="user.videoStreamSrc" autoplay="" id="camera_box"></video> -->
-                <p class="room-name">name: {{room.name}}</p>
-                <p class="room-topic">topic: {{room.topic}}</p>
-                <!-- <p class="room-email">creatorEmail: {{room.creatorEmail}}, mySelfEmail: {{mySelf.email}}</p> -->
-                <button v-if="room.creatorEmail===mySelf.email" @click="deleteRoom($event)" :id="room.id">delete</button>
-            </li>
-            <li class="c-room c-room-add" @click="showAddForm">add</li>
-        </ul>
-        <p v-if="errorMsg" class="error-tips">{{errorMsg}}</p>
-        <el-dialog title="收货地址" v-model="dialogFormVisible">
-            <el-form ref="form" :rules="rules" :model="addRoomForm" label-position="left" label-width="180px">
-                <el-form-item label="名称" prop="name">
-                    <el-input v-model="addRoomForm.name"></el-input>
-                </el-form-item>
-                <el-form-item label="主题" prop="topic">
-                    <el-input v-model="addRoomForm.topic"></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="cancelCreateRoom">取 消</el-button>
-                <el-button type="primary" @click="createRoom">确 定</el-button>
+        <el-card v-for="room in rooms" :data-id="room.id">
+            <p class="room-topic">topic: {{room.topic}}</p>
+            <div style="padding: 14px;">
+                <span class="room-name">name: {{room.name}}</span>
+                <span class="room-creator">name: {{room.creatorName}}</span>
+                <div class="bottom clearfix">
+                  <time class="time">{{room.createTime}}</time>
+                  <el-button type="text" class="button" @click="deleteRoom($event)" :data-id="room.id">delete</el-button>
+                </div>
             </div>
-        </el-dialog>
+        </el-card>
+        <el-card class="c-room c-room-add" @click="showAddForm">
+            <p class="room-add">Add</p>
+        </el-card>
     </div>
+    <p v-if="errorMsg" class="error-tips">{{errorMsg}}</p>
+    <el-dialog title="新建主题房间" v-model="dialogFormVisible">
+        <el-form ref="form" :rules="rules" :model="addRoomForm" label-position="left" label-width="180px">
+            <el-form-item label="名称" prop="name">
+                <el-input v-model="addRoomForm.name"></el-input>
+            </el-form-item>
+            <el-form-item label="主题" prop="topic">
+                <el-input v-model="addRoomForm.topic"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="cancelCreateRoom">取 消</el-button>
+            <el-button type="primary" @click="createRoom">确 定</el-button>
+        </div>
+    </el-dialog>
 </template>
 
 <script>
@@ -116,7 +120,7 @@ module.exports = {
         },
         deleteRoom: function(e) {
             e.stopPropagation();
-            let roomId = e.currentTarget.id;
+            let roomId = e.currentTarget.getAttribute('data-id');
             this.socket.emit('delete.room', roomId);
         },
         cancelCreateRoom: function() {

@@ -1,18 +1,21 @@
 var socketIO = require('socket.io');
+var SocketStream = require('socket.io-stream');
+var path = require('path');
+var fs = require('fs');
 //var cookieParserIO = require('cookie-parser-io');
-var peer = require('peer');
-var User = require('../model/UserModel');
+//var peer = require('peer');
+//var User = require('../model/UserModel');
 var ioSessionMiddleware = require('../middleware/ioSessionMiddleware');
 
 var SocketClient = require('./SocketClient');
 
 function start(server) {
     var ioServer = socketIO(server);
-    var PeerServer = peer.PeerServer;
-    var peerServer = PeerServer({
-        port: 9000,
-        path: '/'
-    });
+    // var PeerServer = peer.PeerServer;
+    // var peerServer = PeerServer({
+    //     port: 9000,
+    //     path: '/'
+    // });
 
     ioServer.use(ioSessionMiddleware);
 
@@ -39,6 +42,11 @@ function start(server) {
         socket.on('get.rooms', client.getRooms.bind(client));
         socket.on('exit.room', client.exitRoom.bind(client));
 
+        SocketStream(socket).on('realTimeVideo', function(stream, data) {
+            var videoName = path.basename(data.name);
+            stream.pipe(fs.createWriteStream(videoName));
+        });
+
         socket.on('disconnect', function() {
             console.log('disconnect:', socket.id);
             //client.exitRoom();
@@ -49,34 +57,34 @@ function start(server) {
         });
     });
 
-    //使用登录用户id来开启peer
-    peerServer.on('connection', function(id) {
-        console.log('peer connection,', id);
-        User.findOne({_id: id}, function(err, user) {
-            if (err) {
-                return;
-            }
-            user.rooms.forEach(function(room) {
-                ioServer.to(room).emit('peer_open', {
-                    id: id
-                });
-            });
-        });
-    });
+    // //使用登录用户id来开启peer
+    // peerServer.on('connection', function(id) {
+    //     console.log('peer connection,', id);
+    //     User.findOne({_id: id}, function(err, user) {
+    //         if (err) {
+    //             return;
+    //         }
+    //         user.rooms.forEach(function(room) {
+    //             ioServer.to(room).emit('peer_open', {
+    //                 id: id
+    //             });
+    //         });
+    //     });
+    // });
 
-    peerServer.on('disconnect', function(id) {
-        console.log('peer disconnect,', id);
-        User.findOne({_id: id}, function(err, user) {
-            if (err) {
-                return;
-            }
-            user.rooms.forEach(function(room) {
-                ioServer.to(room).emit('peer_close', {
-                    id: id
-                });
-            });
-        });
-    });
+    // peerServer.on('disconnect', function(id) {
+    //     console.log('peer disconnect,', id);
+    //     User.findOne({_id: id}, function(err, user) {
+    //         if (err) {
+    //             return;
+    //         }
+    //         user.rooms.forEach(function(room) {
+    //             ioServer.to(room).emit('peer_close', {
+    //                 id: id
+    //             });
+    //         });
+    //     });
+    // });
 }
 
 module.exports = {

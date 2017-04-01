@@ -1,10 +1,18 @@
 <template>
     <div id="profile">
-        <p>{{mySelf ? mySelf.username : ''}}</p>
-        <input @click="requestLogout($event)" type="button" value="logout"/>
+        <p class="username">{{mySelf ? mySelf.username : ''}}</p>
+        <input class="logout-btn" @click="requestLogout($event)" type="button" value="logout"/>
         <p class="error-tip">{{errorMsg}}</p>
     </div>
 </template>
+<style>
+    .username {
+        
+    }
+    .logout-btn {
+        
+    }
+</style>
 
 <script>
     module.exports = {

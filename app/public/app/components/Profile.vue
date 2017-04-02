@@ -1,7 +1,7 @@
 <template>
-    <div id="profile">
-        <p class="username">{{mySelf ? mySelf.username : ''}}</p>
-        <input class="logout-btn" @click="requestLogout($event)" type="button" value="logout"/>
+    <div id="profile" class="clearfix">
+        <p class="username">{{mySelf ? mySelf.userName : ''}}</p>
+        <el-button class="logout-btn" @click="requestLogout">logout</el-button>
         <p class="error-tip">{{errorMsg}}</p>
     </div>
 </template>
@@ -10,7 +10,7 @@
         
     }
     .logout-btn {
-        
+        /*float: right;*/
     }
 </style>
 

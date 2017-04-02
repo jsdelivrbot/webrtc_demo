@@ -3,11 +3,11 @@ var router = express.Router();
 var hash = require('../auth/pass').hash;
 var auth = require('../auth/auth');
 var User = require('../model/UserModel');
-var commonUtils = require('commonUtils');
+var CommonUtils = require('../utils/CommonUtils');
 var _ = require('lodash');
 
-var mapUserInfo = commonUtils.mapUserInfo;
-var checkIfExit = commonUtils.checkIfExit;
+var mapUserInfo = CommonUtils.mapUserInfo;
+var checkIfExit = CommonUtils.checkIfExit;
 
 router.post('/getMySelf', function(req, res) {
     res.json({
@@ -124,14 +124,13 @@ router.post('/checkEmail', function (req, res) {
         .then(function(result) {
             if (result) {
                 res.json({
-                    status: true
-                });
-            } else {
-                res.json({
                     status: false,
                     errorMsg: 'email is exist'
                 });
-                return;
+            } else {
+                res.json({
+                    status: true
+                });
             }
         }, function() {
             res.json({
@@ -147,12 +146,12 @@ router.post('/checkUsername', function (req, res) {
         .then(function(result) {
             if (result) {
                 res.json({
-                    status: true
+                    status: false,
+                    errorMsg: 'username is exist'
                 });
             } else {
                 res.json({
-                    status: false,
-                    errorMsg: 'username is exist'
+                    status: true
                 });
                 return;
             }

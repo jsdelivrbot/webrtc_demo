@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var Utils = require('../utils/Utils');
+var CommonUtils = require('../utils/CommonUtils');
 var _ = require('lodash');
 
 /* GET home page. */
@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
     console.log('user:' + user);
     res.render('index', _.extend({
         title: 'WebRTC'
-    }, Utils.mapUserInfo(user)));
+    }, CommonUtils.mapUserInfo(user)));
 });
 
 /*router.get('/', function (req, res) {

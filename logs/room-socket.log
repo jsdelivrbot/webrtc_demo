@@ -1,0 +1,268 @@
+[2017-04-02 16:44:15.803] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 16:44:16.161] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 16:44:16.167] [TRACE] room-socket - success:get.rooms
+[2017-04-02 16:45:27.695] [TRACE] room-socket - disconnect: X2HMiQYJ7lHUea9WAAAA
+[2017-04-02 16:45:28.283] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 16:45:28.354] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 16:45:28.361] [TRACE] room-socket - success:get.rooms
+[2017-04-02 16:46:36.206] [TRACE] room-socket - disconnect: 4GjKtKACOZ7aRnAaAAAB
+[2017-04-02 16:46:36.922] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 16:46:36.980] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 16:46:36.982] [TRACE] room-socket - success:get.rooms
+[2017-04-02 16:47:31.334] [TRACE] room-socket - disconnect: wR15jQCSLXJltVQvAAAC
+[2017-04-02 16:47:32.035] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 16:47:32.119] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 16:47:32.121] [TRACE] room-socket - success:get.rooms
+[2017-04-02 16:48:30.965] [TRACE] room-socket - disconnect: h8LOuZB0ApsR6zBeAAAD
+[2017-04-02 16:48:31.660] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 16:48:31.944] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 16:48:31.952] [TRACE] room-socket - success:get.rooms
+[2017-04-02 16:48:56.224] [TRACE] room-socket - disconnect: EqDU1z8JvQQ0cFZPAAAE
+[2017-04-02 16:48:56.932] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 16:48:57.071] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 16:48:57.073] [TRACE] room-socket - success:get.rooms
+[2017-04-02 16:49:21.346] [TRACE] room-socket - SocketClient::createRoom, info: { name: 'webpack', topic: 'aaaa' }
+[2017-04-02 16:49:21.741] [TRACE] room-socket - success:create.room
+[2017-04-02 16:56:30.472] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 16:56:30.494] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 16:56:30.505] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:06:43.591] [TRACE] room-socket - disconnect: GK8ER9kLJSiEcbueAAAA
+[2017-04-02 17:06:44.268] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:06:44.313] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:06:44.316] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:07:58.822] [TRACE] room-socket - SocketClient::deleteRoom, roomId: 58e0bb117eaac9209413dde4
+[2017-04-02 17:07:59.045] [ERROR] room-socket - failed:delete.room, { errorMsg: 'create room failed' }
+[2017-04-02 17:08:07.719] [TRACE] room-socket - SocketClient::deleteRoom, roomId: 58e0bb117eaac9209413dde4
+[2017-04-02 17:08:07.722] [ERROR] room-socket - failed:delete.room, { errorMsg: 'create room failed' }
+[2017-04-02 17:08:38.653] [TRACE] room-socket - disconnect: x6NIYCqOx3qfLxLWAAAB
+[2017-04-02 17:08:39.329] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:08:39.473] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:08:39.476] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:09:43.765] [TRACE] room-socket - SocketClient::deleteRoom, roomId: 58e0bb117eaac9209413dde4
+[2017-04-02 17:09:43.767] [ERROR] room-socket - failed:delete.room, { errorMsg: 'create room failed' }
+[2017-04-02 17:12:38.707] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:12:38.727] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:12:38.748] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:13:30.502] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:13:30.514] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:13:30.530] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:13:50.376] [TRACE] room-socket - disconnect: JeYD5xSFJMI1hLk4AAAA
+[2017-04-02 17:13:51.079] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:13:51.214] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:13:51.217] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:13:55.830] [TRACE] room-socket - SocketClient::deleteRoom, roomId: 58e0bb117eaac9209413dde4
+[2017-04-02 17:13:55.839] [TRACE] room-socket - success:delete.room
+[2017-04-02 17:18:42.411] [TRACE] room-socket - SocketClient::createRoom, info: { name: 'webpack', topic: 'aaaaa' }
+[2017-04-02 17:18:42.450] [TRACE] room-socket - success:create.room
+[2017-04-02 17:23:08.353] [TRACE] room-socket - disconnect: F3RZkkJf81kY-KlEAAAB
+[2017-04-02 17:23:09.034] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:23:09.170] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:23:09.172] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:28:16.319] [TRACE] room-socket - disconnect: I3L_-y3imyAXyPUMAAAC
+[2017-04-02 17:28:16.924] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:28:17.054] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:28:17.059] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:29:47.029] [TRACE] room-socket - disconnect: A33FgLxEORMdSl_oAAAD
+[2017-04-02 17:29:47.707] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:29:47.753] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:29:47.756] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:30:56.483] [TRACE] room-socket - disconnect: oOLyZqKiotxCoiInAAAE
+[2017-04-02 17:30:57.135] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:30:57.192] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:30:57.194] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:31:32.703] [TRACE] room-socket - disconnect: -6UGanfmBbrLjRHrAAAF
+[2017-04-02 17:31:33.351] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:31:33.393] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:31:33.398] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:32:32.419] [TRACE] room-socket - disconnect: cm7yG6-aokzjWoL5AAAG
+[2017-04-02 17:32:33.069] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:32:33.130] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:32:33.132] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:32:55.536] [TRACE] room-socket - disconnect: 1gE3Wp78ClPmZzNZAAAH
+[2017-04-02 17:32:56.223] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:32:56.270] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:32:56.275] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:41:12.953] [TRACE] room-socket - disconnect: nG_PPKbSBwxfHcLfAAAI
+[2017-04-02 17:41:13.662] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:41:13.682] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:41:13.684] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:44:41.088] [TRACE] room-socket - disconnect: fcIpVC7D2zYz-q1wAAAJ
+[2017-04-02 17:44:41.685] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:44:41.768] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:44:41.776] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:44:58.532] [TRACE] room-socket - disconnect: fT5iOU9wTN8pcABiAAAK
+[2017-04-02 17:44:59.243] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:44:59.288] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:44:59.291] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:45:57.599] [TRACE] room-socket - disconnect: KqnEGRNqMjyyXJCOAAAL
+[2017-04-02 17:45:58.388] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:45:58.430] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:45:58.433] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:46:52.332] [TRACE] room-socket - disconnect: 6jHhaP5kSQTAIh8jAAAM
+[2017-04-02 17:46:52.963] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:46:53.022] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:46:53.026] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:46:54.029] [TRACE] room-socket - SocketClient::deleteRoom, roomId: 58e0c1f22352c527d09fb6a3
+[2017-04-02 17:46:54.031] [TRACE] room-socket - success:delete.room
+[2017-04-02 17:54:32.556] [TRACE] room-socket - disconnect: xybP4qXCbHMci7dYAAAN
+[2017-04-02 17:54:33.178] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:54:33.223] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:54:33.289] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:54:44.310] [TRACE] room-socket - SocketClient::createRoom, info: { name: 'webpack', topic: 'addiji' }
+[2017-04-02 17:54:44.320] [TRACE] room-socket - success:create.room
+[2017-04-02 17:55:06.757] [TRACE] room-socket - SocketClient::joinRoom, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 17:55:07.056] [TRACE] room-socket - success:join.room
+[2017-04-02 17:55:07.059] [TRACE] room-socket - SocketClient::getRoomInfo, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 17:55:07.062] [TRACE] room-socket - success:get.roomInfo
+[2017-04-02 17:57:05.913] [TRACE] room-socket - disconnect: DHns5PSn5z7wtdE7AAAO
+[2017-04-02 17:57:06.622] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:57:06.709] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:57:06.715] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:57:17.308] [TRACE] room-socket - SocketClient::joinRoom, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 17:57:17.318] [TRACE] room-socket - success:join.room
+[2017-04-02 17:57:17.323] [TRACE] room-socket - SocketClient::getRoomInfo, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 17:57:17.326] [TRACE] room-socket - success:get.roomInfo
+[2017-04-02 17:57:22.021] [TRACE] room-socket - SocketClient::exitRoom, enter
+[2017-04-02 17:57:22.032] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:57:22.068] [TRACE] room-socket - success:leave.socketRoom
+[2017-04-02 17:57:22.101] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:57:23.590] [TRACE] room-socket - SocketClient::joinRoom, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 17:57:23.599] [TRACE] room-socket - success:join.room
+[2017-04-02 17:57:23.606] [TRACE] room-socket - SocketClient::getRoomInfo, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 17:57:23.611] [TRACE] room-socket - success:get.roomInfo
+[2017-04-02 17:58:38.250] [TRACE] room-socket - disconnect: kdjtZNP2YjnkAWHBAAAP
+[2017-04-02 17:58:38.904] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:58:38.946] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:58:38.949] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:58:50.206] [TRACE] room-socket - SocketClient::joinRoom, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 17:58:50.213] [TRACE] room-socket - success:join.room
+[2017-04-02 17:58:50.220] [TRACE] room-socket - SocketClient::getRoomInfo, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 17:58:50.222] [TRACE] room-socket - success:get.roomInfo
+[2017-04-02 17:58:54.879] [TRACE] room-socket - SocketClient::exitRoom, enter
+[2017-04-02 17:58:54.892] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:58:54.894] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:58:54.924] [TRACE] room-socket - success:leave.socketRoom
+[2017-04-02 17:59:14.194] [TRACE] room-socket - disconnect: Ay09jDMKfg9tnMs6AAAQ
+[2017-04-02 17:59:14.929] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 17:59:15.075] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:59:15.077] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:59:16.243] [TRACE] room-socket - SocketClient::joinRoom, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 17:59:16.255] [TRACE] room-socket - success:join.room
+[2017-04-02 17:59:16.259] [TRACE] room-socket - SocketClient::getRoomInfo, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 17:59:16.261] [TRACE] room-socket - success:get.roomInfo
+[2017-04-02 17:59:17.476] [TRACE] room-socket - SocketClient::exitRoom, enter
+[2017-04-02 17:59:17.493] [TRACE] room-socket - success:leave.socketRoom
+[2017-04-02 17:59:17.494] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 17:59:17.497] [TRACE] room-socket - success:get.rooms
+[2017-04-02 17:59:18.284] [TRACE] room-socket - SocketClient::joinRoom, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 17:59:18.342] [TRACE] room-socket - success:join.room
+[2017-04-02 17:59:18.345] [TRACE] room-socket - SocketClient::getRoomInfo, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 17:59:18.347] [TRACE] room-socket - success:get.roomInfo
+[2017-04-02 18:45:38.240] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 18:47:34.482] [TRACE] room-socket - disconnect: Ria61sg6ADW0msgVAAAA
+[2017-04-02 18:47:35.134] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 18:47:35.183] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 18:47:35.200] [TRACE] room-socket - success:get.rooms
+[2017-04-02 18:47:37.648] [TRACE] room-socket - SocketClient::joinRoom, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 18:47:37.724] [TRACE] room-socket - success:join.room
+[2017-04-02 18:47:37.728] [TRACE] room-socket - SocketClient::getRoomInfo, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 18:47:37.735] [TRACE] room-socket - success:get.roomInfo
+[2017-04-02 18:47:38.698] [TRACE] room-socket - SocketClient::exitRoom, enter
+[2017-04-02 18:47:38.714] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 18:47:38.773] [TRACE] room-socket - success:leave.socketRoom
+[2017-04-02 18:47:38.774] [TRACE] room-socket - success:get.rooms
+[2017-04-02 18:47:40.271] [TRACE] room-socket - SocketClient::joinRoom, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 18:47:40.281] [TRACE] room-socket - success:join.room
+[2017-04-02 18:47:40.290] [TRACE] room-socket - SocketClient::getRoomInfo, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 18:47:40.294] [TRACE] room-socket - success:get.roomInfo
+[2017-04-02 18:52:56.946] [TRACE] room-socket - SocketClient::exitRoom, enter
+[2017-04-02 18:52:56.966] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 18:52:56.970] [TRACE] room-socket - success:leave.socketRoom
+[2017-04-02 18:52:56.972] [TRACE] room-socket - success:get.rooms
+[2017-04-02 18:52:57.993] [TRACE] room-socket - SocketClient::joinRoom, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 18:52:58.003] [TRACE] room-socket - success:join.room
+[2017-04-02 18:52:58.006] [TRACE] room-socket - SocketClient::getRoomInfo, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 18:52:58.009] [TRACE] room-socket - success:get.roomInfo
+[2017-04-02 18:53:02.393] [TRACE] room-socket - SocketClient::exitRoom, enter
+[2017-04-02 18:53:02.405] [TRACE] room-socket - success:leave.socketRoom
+[2017-04-02 18:53:02.406] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 18:53:02.523] [TRACE] room-socket - success:get.rooms
+[2017-04-02 18:53:03.936] [TRACE] room-socket - disconnect: MdUSf2ZeueRnLYZYAAAB
+[2017-04-02 18:53:04.551] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 18:53:04.611] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 18:53:04.613] [TRACE] room-socket - success:get.rooms
+[2017-04-02 18:55:28.458] [TRACE] room-socket - SocketClient::joinRoom, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 18:55:28.468] [TRACE] room-socket - success:join.room
+[2017-04-02 18:55:28.475] [TRACE] room-socket - SocketClient::getRoomInfo, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 18:55:28.477] [TRACE] room-socket - success:get.roomInfo
+[2017-04-02 18:57:01.109] [TRACE] room-socket - SocketClient::exitRoom, enter
+[2017-04-02 18:57:01.124] [TRACE] room-socket - success:leave.socketRoom
+[2017-04-02 18:57:01.126] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 18:57:01.129] [TRACE] room-socket - success:get.rooms
+[2017-04-02 18:57:08.678] [TRACE] room-socket - SocketClient::joinRoom, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 18:57:08.688] [TRACE] room-socket - success:join.room
+[2017-04-02 18:57:08.692] [TRACE] room-socket - SocketClient::getRoomInfo, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 18:57:08.695] [TRACE] room-socket - success:get.roomInfo
+[2017-04-02 19:02:57.015] [TRACE] room-socket - SocketClient::exitRoom, enter
+[2017-04-02 19:02:57.029] [TRACE] room-socket - success:leave.socketRoom
+[2017-04-02 19:02:57.030] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 19:02:57.034] [TRACE] room-socket - success:get.rooms
+[2017-04-02 19:02:58.357] [TRACE] room-socket - disconnect: LoHUqbkGjrTGWyN-AAAC
+[2017-04-02 19:02:58.977] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 19:02:59.026] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 19:02:59.028] [TRACE] room-socket - success:get.rooms
+[2017-04-02 19:03:00.017] [TRACE] room-socket - SocketClient::joinRoom, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 19:03:00.025] [TRACE] room-socket - success:join.room
+[2017-04-02 19:03:00.033] [TRACE] room-socket - SocketClient::getRoomInfo, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 19:03:00.036] [TRACE] room-socket - success:get.roomInfo
+[2017-04-02 19:03:01.391] [TRACE] room-socket - realTimeVideo
+[2017-04-02 19:09:03.658] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 19:09:03.689] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 19:09:03.701] [TRACE] room-socket - SocketClient::exitRoom, enter
+[2017-04-02 19:09:03.702] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 19:09:03.718] [TRACE] room-socket - success:get.rooms
+[2017-04-02 19:09:03.749] [TRACE] room-socket - success:leave.socketRoom
+[2017-04-02 19:09:03.832] [TRACE] room-socket - success:get.rooms
+[2017-04-02 19:09:51.468] [TRACE] room-socket - SocketClient::joinRoom, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 19:09:51.485] [TRACE] room-socket - success:join.room
+[2017-04-02 19:09:51.515] [TRACE] room-socket - SocketClient::getRoomInfo, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 19:09:51.518] [TRACE] room-socket - success:get.roomInfo
+[2017-04-02 19:09:53.675] [TRACE] room-socket - realTimeVideo
+[2017-04-02 19:11:16.607] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 19:11:16.643] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 19:11:16.664] [TRACE] room-socket - SocketClient::exitRoom, enter
+[2017-04-02 19:11:16.665] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 19:11:16.687] [TRACE] room-socket - success:get.rooms
+[2017-04-02 19:11:16.704] [TRACE] room-socket - success:get.rooms
+[2017-04-02 19:11:16.738] [TRACE] room-socket - success:leave.socketRoom
+[2017-04-02 19:11:24.679] [TRACE] room-socket - SocketClient::joinRoom, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 19:11:24.701] [TRACE] room-socket - success:join.room
+[2017-04-02 19:11:24.725] [TRACE] room-socket - SocketClient::getRoomInfo, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 19:11:24.728] [TRACE] room-socket - success:get.roomInfo
+[2017-04-02 19:11:26.397] [TRACE] room-socket - realTimeVideo
+[2017-04-02 19:12:04.927] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 19:12:04.980] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 19:12:04.996] [TRACE] room-socket - success:get.rooms
+[2017-04-02 19:12:11.679] [TRACE] room-socket - SocketClient::joinRoom, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 19:12:11.715] [TRACE] room-socket - success:join.room
+[2017-04-02 19:12:11.719] [TRACE] room-socket - SocketClient::getRoomInfo, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 19:12:11.722] [TRACE] room-socket - success:get.roomInfo
+[2017-04-02 19:12:35.196] [TRACE] room-socket - realTimeVideo
+[2017-04-02 19:12:53.603] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 19:13:23.461] [TRACE] room-socket - disconnect: _sxm7NQPTwtZJmhXAAAA
+[2017-04-02 19:13:30.858] [TRACE] room-socket - socket connection hztpp
+[2017-04-02 19:13:30.924] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 19:13:30.937] [TRACE] room-socket - success:get.rooms
+[2017-04-02 19:13:39.520] [TRACE] room-socket - SocketClient::joinRoom, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 19:13:39.544] [TRACE] room-socket - success:join.room
+[2017-04-02 19:13:39.578] [TRACE] room-socket - SocketClient::getRoomInfo, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 19:13:39.583] [TRACE] room-socket - success:get.roomInfo
+[2017-04-02 19:13:40.923] [TRACE] room-socket - SocketClient::exitRoom, enter
+[2017-04-02 19:13:40.968] [TRACE] room-socket - success:leave.socketRoom
+[2017-04-02 19:13:40.973] [TRACE] room-socket - SocketClient::getRooms, enter
+[2017-04-02 19:13:40.976] [TRACE] room-socket - success:get.rooms
+[2017-04-02 19:13:41.687] [TRACE] room-socket - SocketClient::joinRoom, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 19:13:41.702] [TRACE] room-socket - success:join.room
+[2017-04-02 19:13:41.707] [TRACE] room-socket - SocketClient::getRoomInfo, roomId: 58e0ca642352c527d09fb6a4
+[2017-04-02 19:13:41.710] [TRACE] room-socket - success:get.roomInfo
+[2017-04-02 19:14:05.069] [TRACE] room-socket - realTimeVideo

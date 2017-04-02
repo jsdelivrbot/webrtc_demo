@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var roomUtils = require('../utils/roomUtils');
+var RoomUtils = require('../utils/RoomUtils');
 //var _ = require('lodash');
 
 //User.findOneAndUpdate({}, {'$set': {'rooms': []}}, function(err, _user) {});
@@ -19,7 +19,7 @@ router.post('/createRoom', checkAuth, function(req, res) {
     let name = req.body.name;
     let topic = req.body.topic;
 
-    roomUtils.createRoom(user, name, topic).then(function(data) {
+    RoomUtils.createRoom(user, name, topic).then(function(data) {
         res.json({
             status: true,
             result: data.room
@@ -36,7 +36,7 @@ router.post('/deleteRoom', checkAuth, function(req, res) {
     let user = req.session.user;
     let roomId = req.body.roomId;
 
-    roomUtils.deleteRoom(user, roomId).then(function(data) {
+    RoomUtils.deleteRoom(user, roomId).then(function(data) {
         res.json({
             status: true,
             result: data.room
@@ -53,7 +53,7 @@ router.post('/joinRoom', function(req, res) {
     let user = req.session.user;
     let roomId = req.body.roomId;
 
-    roomUtils.joinRoom(user, roomId).then(function(data) {
+    RoomUtils.joinRoom(user, roomId).then(function(data) {
         res.json({
             status: true,
             result: data.room
@@ -70,7 +70,7 @@ router.post('/exitRoom', function(req, res) {
     let user = req.session.user;
     let roomId = req.body.id;
 
-    roomUtils.exitRoom(user, roomId).then(function(data) {
+    RoomUtils.exitRoom(user, roomId).then(function(data) {
         res.json({
             status: true,
             result: data.room
@@ -87,7 +87,7 @@ router.post('/getRoomInfo', function(req, res) {
     let user = req.session.user;
     let roomId = req.body.roomId;
 
-    roomUtils.getRoomInfo(user, roomId).then(function(data) {
+    RoomUtils.getRoomInfo(user, roomId).then(function(data) {
         res.json({
             status: true,
             result: data.room
@@ -101,7 +101,7 @@ router.post('/getRoomInfo', function(req, res) {
 });
 
 router.post('/getRooms', function(req, res) {
-    roomUtils.getRooms().then(function(data) {
+    RoomUtils.getRooms().then(function(data) {
         res.json({
             status: true,
             result: data.rooms

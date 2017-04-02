@@ -1,41 +1,45 @@
 <template>
-    <div class="room-list">
-        <el-card v-for="room in rooms" :data-id="room.id">
-            <p class="room-topic">topic: {{room.topic}}</p>
-            <div style="padding: 14px;">
-                <span class="room-name">name: {{room.name}}</span>
-                <span class="room-creator">name: {{room.creatorName}}</span>
-                <div class="bottom clearfix">
-                  <time class="time">{{room.createTime}}</time>
-                  <el-button type="text" class="button" @click="deleteRoom($event)" :data-id="room.id">delete</el-button>
+    <div class="room-hall">
+        <div class="room-list">
+            <el-card v-for="room in rooms" :data-id="room.id">
+                <p class="room-topic">topic: {{room.topic}}</p>
+                <div style="padding: 14px;">
+                    <span class="room-name">name: {{room.name}}</span>
+                    <span class="room-creator">name: {{room.creatorName}}</span>
+                    <div class="bottom clearfix">
+                      <time class="time">{{room.createTimeFormat}}</time>
+                      <el-button class="button" @click="deleteRoom(room.id)">delete</el-button>
+                      <el-button class="button" @click="gotoRoom(room.id)">join</el-button>
+                    </div>
                 </div>
-            </div>
-        </el-card>
-        <el-card class="c-room c-room-add" @click="showAddForm">
-            <p class="room-add">Add</p>
-        </el-card>
-    </div>
-    <p v-if="errorMsg" class="error-tips">{{errorMsg}}</p>
-    <el-dialog title="新建主题房间" v-model="dialogFormVisible">
-        <el-form ref="form" :rules="rules" :model="addRoomForm" label-position="left" label-width="180px">
-            <el-form-item label="名称" prop="name">
-                <el-input v-model="addRoomForm.name"></el-input>
-            </el-form-item>
-            <el-form-item label="主题" prop="topic">
-                <el-input v-model="addRoomForm.topic"></el-input>
-            </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-            <el-button @click="cancelCreateRoom">取 消</el-button>
-            <el-button type="primary" @click="createRoom">确 定</el-button>
+            </el-card>
+            <el-card class="c-room c-room-add">
+                <p class="room-add" @click="showAddForm">Add</p>
+            </el-card>
         </div>
-    </el-dialog>
+        <p v-if="errorMsg" class="error-tips">{{errorMsg}}</p>
+        <el-dialog title="新建主题房间" v-model="dialogFormVisible">
+            <el-form ref="form" :rules="rules" :model="addRoomForm" label-position="left" label-width="100px">
+                <el-form-item label="名称" prop="name">
+                    <el-input v-model="addRoomForm.name"></el-input>
+                </el-form-item>
+                <el-form-item label="主题" prop="topic">
+                    <el-input v-model="addRoomForm.topic"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="cancelCreateRoom">取 消</el-button>
+                <el-button type="primary" @click="createRoom">确 定</el-button>
+            </div>
+        </el-dialog>
+    </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 import io from 'socket.io-client';
 import validateUtils from '../utils/validateUtils';
+import dateformat from 'dateformat';
 
 module.exports = {
     data: function() {
@@ -47,7 +51,7 @@ module.exports = {
             },
             errorMsg: '',
             addRoomForm: {},
-            formVisible: false
+            dialogFormVisible: false
         };
     },
     mounted: function() {
@@ -91,13 +95,13 @@ module.exports = {
 
             socket.on('success:get.rooms', function(rooms) {
                 console.log('success:get.rooms', rooms);
-                _this.rooms = rooms;
+                _this.rooms = rooms.map(_this.mapRoomInfo);
             });
 
             socket.on('success:create.room', function(room) {
                 console.log('success:create.room', room);
                 _this.hideAddForm();
-                _this.rooms.push(room);
+                _this.rooms.push(_this.mapRoomInfo(room));
             });
 
             socket.on('success:delete.room', function(room) {
@@ -115,19 +119,21 @@ module.exports = {
         hideAddForm: function() {
             this.dialogFormVisible = false;
         },
+        mapRoomInfo: function(room) {
+            return Object.assign({}, room, {
+                createTimeFormat: dateformat(new Date(room.createTime), 'yyyy-mm-dd HH:MM:ss')
+            });
+        },
         createRoom: function() {
             this.socket.emit('create.room', this.addRoomForm);
-        },
-        deleteRoom: function(e) {
-            e.stopPropagation();
-            let roomId = e.currentTarget.getAttribute('data-id');
-            this.socket.emit('delete.room', roomId);
         },
         cancelCreateRoom: function() {
             this.dialogFormVisible = false;
         },
-        gotoRoom: function(e) {
-            let roomId = e.currentTarget.id;
+        deleteRoom: function(roomId) {
+            this.socket.emit('delete.room', roomId);
+        },
+        gotoRoom: function(roomId) {
             this.$router.push('/room/' + roomId);
         }
     }

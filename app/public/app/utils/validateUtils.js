@@ -39,16 +39,16 @@ function checkRemote(key, value, callback) {
 export default {
     email: [
         { required: true, message: '请输入email', trigger: 'blur' },
-        { type: 'email', message: '请输入有效email账户', trigger: 'blur,change' },
-        { validate: checkEmail, trigger: 'blur,change' }
+        { type: 'email', message: '请输入有效email账户', trigger: 'blur' },
+        { validator: checkEmail, trigger: 'blur' }
     ],
     password: [
         { required: true, message: '请输入密码', trigger: 'blur' },
-        { validate: validatePass, trigger: 'blur' }
+        { validator: validatePass, trigger: 'blur' }
     ],
     username: [
         { required: true, message: '请输入用户昵称', trigger: 'blur' },
-        { validate: checkUsername, trigger: 'blur,change' }
+        { validator: checkUsername, trigger: 'blur' }
     ],
     roomName: [
         { required: true, message: '请输入房间名称', trigger: 'blur' }

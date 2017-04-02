@@ -1,6 +1,6 @@
 var User = require('../model/UserModel');
 var Room = require('../model/RoomModel');
-var mapUserInfo = require('commonUtils').mapUserInfo;
+var mapUserInfo = require('./CommonUtils').mapUserInfo;
 
 function mapRoomsInfo(rooms) {
     return rooms.map(mapRoomInfo);
@@ -51,14 +51,14 @@ function createRoom(user, name, topic) {
 
 function deleteRoom(user, roomId) {
     return new Promise((resolve, reject) => {
-        Room.findOneAndRemove({_id: roomId, creatorName: user.email}, function(err, room) {
+        Room.findOneAndRemove({_id: roomId, creatorEmail: user.email}, function(err, room) {
             //console.log('delete room:', room);
             if (err) {
                 reject({errorMsg: 'delete room failed'});
                 return;
             }
             if (!room) {
-                reject({errorMsg: 'create room failed'});
+                reject({errorMsg: 'no room to delete'});
                 return;
             }
             resolve({

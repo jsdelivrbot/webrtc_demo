@@ -1,12 +1,16 @@
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
-var logger = require('morgan');
+//var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var sessionMiddleware = require('./middleware/sessionMiddleware');
 //var session = require('express-session');
 //var MongoDBStore = require('connect-mongodb-session')(session);
 var bodyParser = require('body-parser');
+var log4js = require('log4js');
+
+log4js.configure(require('./log/config'));
+var logger = log4js.getLogger('http-connect');
 
 //var ejs = require('ejs');
 
@@ -17,8 +21,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 //app.engine('html', require('ejs').__express);
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+// app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
@@ -28,6 +32,8 @@ app.use(sessionMiddleware);
 
 //app.use(session());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(log4js.connectLogger(logger, { level: 'auto' })); //http log
 
 /*router*/
 app.use('*', require('./routes/index'));
@@ -82,6 +88,5 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
 
 module.exports = app;

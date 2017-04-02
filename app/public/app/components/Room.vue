@@ -1,10 +1,11 @@
 <template>
-    <div class="chat-room" :id="roomId">
+    <div class="chat-room" :data-id="roomId">
         <h3>{{roomInfo.name}}</h3>
         <h4>{{roomInfo.topic}}</h4>
         <div class="creator">
             <h3>{{roomInfo.creatorName}}</h3>
         </div>
+        <el-button @click="openVideo">开启视频</el-button>
         <ul>
             <li class="c-member" v-for="member in members" @click="requestVideo($event)" :id="member.id">
                 <!-- <video :src="user.videoStreamSrc" autoplay="" id="camera_box"></video> -->
@@ -62,6 +63,8 @@ module.exports = {
                 this.$store.dispatch('saveSocket', io());
             }
 
+            this.stream = ss.createStream();
+
             this.initSocketEvents();
 
             window.onbeforeunload = function() {
@@ -72,12 +75,6 @@ module.exports = {
             this.socket.emit('join.room', this.roomId);
             //this.socket.emit('get.roomInfo', this.roomId);
             //this.peer = this.openPeer();
-        },
-        createSocket: function() {
-            let socket = io();
-            this.stream = ss.createStream();
-
-            return socket;
         },
         initSocketEvents: function() {
             let _this = this;
@@ -235,7 +232,7 @@ module.exports = {
                 });
             });
         },
-        openVideo: function(successFn, failFn) {
+        openVideo: function() {
             var _this = this;
             //视频连接
             var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
@@ -244,14 +241,15 @@ module.exports = {
                 video: true,
                 audio: true
             }, function(stream) {
-                successFn ? successFn(stream) : null;
+                debugger
+                //successFn ? successFn(stream) : null;
                 //send stream to socketserver
                 ss(_this.socket).emit('realTimeVideo', _this.stream, {name: _this.mySelf.userName});
                 ss.createBlobReadStream(stream).pipe(_this.stream);
                 //var call = _this.peer.call(toId, stream);
                 //_this.showVideo(_this.userId, stream);
             }, function(err) {
-                failFn ? failFn(err) : null;
+                //failFn ? failFn(err) : null;
             });
         }
     }

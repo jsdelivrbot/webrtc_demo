@@ -2,9 +2,11 @@
     <div class="chat-room" :data-id="roomId">
         <h3>{{roomInfo.name}}</h3>
         <h4>{{roomInfo.topic}}</h4>
+        <!-- <input type="file"/> -->
         <div class="creator">
             <h3>{{roomInfo.creatorName}}</h3>
         </div>
+        <video :src="videoSrc" autoplay=""></video>
         <el-button @click="openVideo">开启视频</el-button>
         <ul>
             <li class="c-member" v-for="member in members" @click="requestVideo($event)" :id="member.id">
@@ -17,10 +19,10 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import Peer from '../lib/peer';
 import _ from 'lodash';
 import io from 'socket.io-client';
-import ss from 'socket.io-stream';
+import $ from 'jquery';
+//import ss from 'socket.io-stream';
 
 module.exports = {
     data: function() {
@@ -28,8 +30,15 @@ module.exports = {
             members: [],
             peer: null,
             roomInfo: {},
-            roomId: ''
+            roomId: '',
+            videoSrc: ''
         };
+    },
+    beforeRouteEnter: function(to, from, next) {
+        next();
+        // 在渲染该组件的对应路由被 confirm 前调用
+        // 不！能！获取组件实例 `this`
+        // 因为当钩子执行前，组件实例还没被创建
     },
     mounted: function() {
         this.init();
@@ -45,6 +54,7 @@ module.exports = {
             this.socket.off('success:exit.room');
             this.socket.off('success:get.roomInfo');
         }
+        this.stream = null;
         this.exitRoom(this.roomId);
     },
     computed: mapGetters([
@@ -63,14 +73,14 @@ module.exports = {
                 this.$store.dispatch('saveSocket', io());
             }
 
-            this.stream = ss.createStream();
-
             this.initSocketEvents();
 
             window.onbeforeunload = function() {
                 _this.beforeDestroy();
                 return true; // 可以阻止关闭
             };
+
+            //$('input[type="file"]').on('change', function() {});
             
             this.socket.emit('join.room', this.roomId);
             //this.socket.emit('get.roomInfo', this.roomId);
@@ -109,15 +119,9 @@ module.exports = {
                 //socket.emit('join.room', _this.roomId);
             });
 
-            // 有peer接入到webrtc服务器, 服务器通过socket将其他id实时推送到客户端
-            socket.on('peer_open', function(peerUser) {
-                console.log('peer_open', peerUser);
-                _this.addPerson(peerUser);
-            });
-
-            socket.on('peer_close', function(peerUser) {
-                console.log('peer_close', peerUser);
-                _this.removePerson(peerUser);
+            socket.on('video', function(arrayBuffer) {
+                var blob = new Blob([arrayBuffer]);
+                _this.videoSrc = window.URL.createObjectURL(blob);
             });
 
             socket.on('error', function() {
@@ -129,76 +133,6 @@ module.exports = {
             });
 
             return socket;
-        },
-        openPeer: function() {
-            var _this = this;
-            // 开启一个webrtc点
-            var peer = new Peer(this.userId, {
-                host: '/',
-                port: 9000
-            });
-
-            // The `open` event signifies that the Peer is ready to connect with other
-            // Peers and, if we didn't provide the Peer with an ID, that an ID has been
-            // assigned by the server.
-            // webrtc点开启成功, 记录peer信息到服务器
-            peer.on('open', function(id) {
-                console.log('peer open', id);
-                _this.peerId = id;
-            });
-            // Wait for a connection from the second peer.
-            peer.on('connection', function(connection) {
-                // This `connection` is a DataConnection object with which we can send
-                // data.
-                // The `open` event firing means that the connection is now ready to
-                // transmit data.
-                connection.on('open', function() {
-                    // Send 'Hello' on the connection.
-                    //connection.send('Hello peer2!');
-                });
-                //接收到另一客户端的数据信息
-                connection.on('data', function(data) {
-                    switch(data.type) {
-                    // 视频请求信息
-                    case 'video_request':
-                        var isConfirm = confirm(data.content);
-                        if(isConfirm) {
-                            _this.openVideo(
-                                function(stream) {
-                                    var call = _this.peer.call(data.id, stream);
-                                    call.on('stream', function(remoteStream) {
-                                        // Show stream in some video/canvas element.
-                                        _this.showVideo(data.id, remoteStream);
-                                    });
-                                },
-                                function(err) {
-                                    console.log(err);
-                                }
-                            );
-                        } else {
-                            return;
-                        }
-                    }
-                });
-            });
-
-            //其他客户端共享视频流到本客户端
-            peer.on('call', function(call) {
-                _this.openVideo(function(stream) {
-                    call.answer(stream);
-                    call.on('stream', function(remoteStream) {
-                        // Show stream in some video/canvas element.
-                        _this.showVideo(call.peer, remoteStream);
-                    });
-                });
-            });
-
-            return peer;
-        },
-        closePeer: function() {
-            if (this.peer) {
-                this.peer.disconnect();
-            }
         },
         addMember: function(user) {
             this.members.push(user);
@@ -241,13 +175,23 @@ module.exports = {
                 video: true,
                 audio: true
             }, function(stream) {
-                debugger
-                //successFn ? successFn(stream) : null;
-                //send stream to socketserver
-                ss(_this.socket).emit('realTimeVideo', _this.stream, {name: _this.mySelf.userName});
-                ss.createBlobReadStream(stream).pipe(_this.stream);
-                //var call = _this.peer.call(toId, stream);
-                //_this.showVideo(_this.userId, stream);
+                var mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.onstart = function(e) {
+                    _this.chunks = [];
+                };
+                mediaRecorder.ondataavailable = function(e) {
+                    _this.chunks.push(e.data);
+                };
+                mediaRecorder.onstop = function(e) {
+                    var blob = new Blob(_this.chunks);
+                    _this.socket.emit('video', blob);
+                };
+
+                mediaRecorder.start();
+                // Stop recording after 5 seconds and broadcast it to server
+                setTimeout(function() {
+                    mediaRecorder.stop();
+                }, 200);
             }, function(err) {
                 //failFn ? failFn(err) : null;
             });

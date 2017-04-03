@@ -20,10 +20,8 @@ class SocketClient {
         socket.on('get.rooms', this.getRooms.bind(this));
         socket.on('exit.room', this.exitRoom.bind(this));
 
-        SocketStream(socket).on('realTimeVideo', function(stream, data) {
-            logger.trace('realTimeVideo');
-            var videoName = path.basename(data.name);
-            stream.pipe(fs.createWriteStream(videoName));
+        socket.on('video', function(blob) {
+            socket.emit('video', blob);
         });
 
         socket.on('disconnect', function() {

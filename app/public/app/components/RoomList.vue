@@ -38,8 +38,10 @@
 <script>
 import { mapGetters } from 'vuex';
 import io from 'socket.io-client';
+import ss from 'socket.io-stream';
 import validateUtils from '../utils/validateUtils';
 import dateformat from 'dateformat';
+import $ from 'jquery';
 
 module.exports = {
     data: function() {

@@ -13,22 +13,13 @@ class SocketClient {
     }
     init() {
         let socket = this.socket;
-        let _this = this;
         socket.on('create.room', this.createRoom.bind(this));
         socket.on('delete.room', this.deleteRoom.bind(this));
         socket.on('join.room', this.joinRoom.bind(this));
         socket.on('get.roomInfo', this.getRoomInfo.bind(this));
         socket.on('get.rooms', this.getRooms.bind(this));
         socket.on('exit.room', this.exitRoom.bind(this));
-
-        socket.on('open:video', function(blob) {
-            _this.user.rooms.forEach(function(roomId) {
-                socket.to(roomId).emit('open:video', {
-                    stream: blob,
-                    userEmail: _this.user.email
-                });
-            });
-        });
+        socket.on('open:video', this.openVideo.bind(this));
 
         socket.on('disconnect', function() {
             logger.trace('disconnect:', socket.id);
@@ -40,6 +31,16 @@ class SocketClient {
         });
 
         socket.emit('init');
+    }
+    openVideo(blob) {
+        let user = this.user;
+        let socket = this.socket;
+        user.rooms.forEach(function(roomId) {
+            socket.to(roomId).emit('open:video', {
+                stream: blob,
+                userEmail: user.email
+            });
+        });
     }
     createRoom(opts) {
         logger.trace('SocketClient::createRoom, info:', opts);

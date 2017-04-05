@@ -6,11 +6,10 @@
         <div class="creator">
             <h3>{{roomInfo.creatorName}}</h3>
         </div>
-        <video :src="videoSrc" autoplay=""></video>
         <el-button @click="openVideo">开启视频</el-button>
         <ul>
             <li class="c-member" v-for="member in members" @click="requestVideo($event)" :id="member.id">
-                <!-- <video :src="user.videoStreamSrc" autoplay="" id="camera_box"></video> -->
+                <video :src="user.videoStreamSrc" autoplay="" id="camera_box"></video>
                 <p class="member-name">name: {{member.userName}}</p>
             </li>
         </ul>
@@ -119,9 +118,9 @@ module.exports = {
                 //socket.emit('join.room', _this.roomId);
             });
 
-            socket.on('video', function(arrayBuffer) {
-                var blob = new Blob([arrayBuffer]);
-                _this.videoSrc = window.URL.createObjectURL(blob);
+            socket.on('open:video', function(data) {
+                var blob = new Blob([data.stream]);
+                _this.showVideo(data.userEmail, blob);
             });
 
             socket.on('error', function() {
@@ -147,23 +146,13 @@ module.exports = {
             console.log('exit.room');
             this.socket.emit('exit.room', roomId);
         },
-        showVideo: function(id, stream) {
+        showVideo: function(email, stream) {
+            if (email === this.mySelf.email) {
+                return;
+            }
             var src = (window.URL && window.URL.createObjectURL) ? window.URL.createObjectURL(stream) : stream;
             this.users = this.users.map(function(user) {
-                return user.userId === id ? _.extend({}, user, {videoStreamSrc: src}) : user;
-            });
-        },
-        requestVideo: function(e) {
-            var _this = this;
-            var c = this.peer.connect(e.currentTarget.id);
-            //与该客户端建立连接并请求视频共享
-            c.on('open', function(conn) {
-                c.send({
-                    id: _this.peerId,
-                    type: 'video_request',
-                    content: _this.peerId + ' is asked for your video sharing!',
-                    toId: e.target.id
-                });
+                return user.email === email ? _.extend({}, user, {videoStreamSrc: src}) : user;
             });
         },
         openVideo: function() {
@@ -175,23 +164,24 @@ module.exports = {
                 video: true,
                 audio: true
             }, function(stream) {
-                var mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.onstart = function(e) {
-                    _this.chunks = [];
-                };
-                mediaRecorder.ondataavailable = function(e) {
-                    _this.chunks.push(e.data);
-                };
-                mediaRecorder.onstop = function(e) {
-                    var blob = new Blob(_this.chunks);
-                    _this.socket.emit('video', blob);
-                };
+                _this.socket.emit('open:video', stream);
+                // var mediaRecorder = new MediaRecorder(stream);
+                // mediaRecorder.onstart = function(e) {
+                //     _this.chunks = [];
+                // };
+                // mediaRecorder.ondataavailable = function(e) {
+                //     _this.chunks.push(e.data);
+                // };
+                // mediaRecorder.onstop = function(e) {
+                //     var blob = new Blob(_this.chunks);
+                //     _this.socket.emit('video', stream);
+                // };
 
-                mediaRecorder.start();
-                // Stop recording after 5 seconds and broadcast it to server
-                setTimeout(function() {
-                    mediaRecorder.stop();
-                }, 200);
+                // mediaRecorder.start();
+                // // Stop recording after 5 seconds and broadcast it to server
+                // setTimeout(function() {
+                //     mediaRecorder.stop();
+                // }, 200);
             }, function(err) {
                 //failFn ? failFn(err) : null;
             });

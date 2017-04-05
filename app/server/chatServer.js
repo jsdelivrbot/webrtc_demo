@@ -1,9 +1,9 @@
 var socketIO = require('socket.io');
 var log4js = require('log4js');
 var logger = log4js.getLogger('room-socket');
+var User = require('../model/UserModel');
 //var cookieParserIO = require('cookie-parser-io');
 //var peer = require('peer');
-//var User = require('../model/UserModel');
 var ioSessionMiddleware = require('../middleware/ioSessionMiddleware');
 
 var SocketClient = require('./SocketClient');
@@ -23,7 +23,7 @@ function start(server) {
         let session = socket.handshake.session;
         let user = session.user;
 
-        logger.trace('socket connection', user.username);
+        logger.trace('socket connection', user);
 
         if (!user) {
             logger.error('failed:auth');
@@ -33,8 +33,16 @@ function start(server) {
             });
         }
 
-        let client = new SocketClient(ioServer, socket, user);
-        client.init();
+        User.findOne({email: user.email}, function(err, _user) {
+            if (err) {
+                socket.emit('error', {
+                    errorMsg: 'match user failed!'
+                });
+                return;
+            }
+            let client = new SocketClient(ioServer, socket, _user);
+            client.init();
+        });
     });
 }
 

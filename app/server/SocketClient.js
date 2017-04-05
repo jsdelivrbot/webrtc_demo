@@ -1,9 +1,9 @@
 var RoomUtils = require('../utils/RoomUtils');
 var log4js = require('log4js');
 var logger = log4js.getLogger('room-socket');
-var SocketStream = require('socket.io-stream');
-var path = require('path');
-var fs = require('fs');
+// var SocketStream = require('socket.io-stream');
+// var path = require('path');
+// var fs = require('fs');
 
 class SocketClient {
     constructor(io, socket, user) {
@@ -13,6 +13,7 @@ class SocketClient {
     }
     init() {
         let socket = this.socket;
+        let _this = this;
         socket.on('create.room', this.createRoom.bind(this));
         socket.on('delete.room', this.deleteRoom.bind(this));
         socket.on('join.room', this.joinRoom.bind(this));
@@ -20,8 +21,13 @@ class SocketClient {
         socket.on('get.rooms', this.getRooms.bind(this));
         socket.on('exit.room', this.exitRoom.bind(this));
 
-        socket.on('video', function(blob) {
-            socket.emit('video', blob);
+        socket.on('open:video', function(blob) {
+            _this.user.rooms.forEach(function(roomId) {
+                socket.to(roomId).emit('open:video', {
+                    stream: blob,
+                    userEmail: _this.user.email
+                });
+            });
         });
 
         socket.on('disconnect', function() {
@@ -32,6 +38,8 @@ class SocketClient {
         socket.on('socket-destroyed', function() {
             logger.trace('socket-destroyed:', socket.id);
         });
+
+        socket.emit('init');
     }
     createRoom(opts) {
         logger.trace('SocketClient::createRoom, info:', opts);
@@ -66,7 +74,7 @@ class SocketClient {
     }
     joinRoom(roomId) {
         logger.trace('SocketClient::joinRoom, roomId:', roomId);
-        let io = this.io;
+        //let io = this.io;
         let socket = this.socket;
         let user = this.user;
         socket.join(roomId, function(err) {
@@ -79,7 +87,7 @@ class SocketClient {
             RoomUtils.joinRoom(user, roomId).then(function(data) {
                 logger.trace('success:join.room');
                 //socket.emit('success:join.socketRoom', data.room);
-                io.to(roomId).emit('success:join.room', data); //room and user
+                socket.to(roomId).emit('success:join.room', data); //room and user
             }, function(data) {
                 logger.error('failed:join.room', data);
                 socket.emit('failed:join.room', {

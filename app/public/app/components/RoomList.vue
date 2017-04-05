@@ -65,7 +65,7 @@ module.exports = {
     },
     beforeDestroy: function() {
         if (this.socket) {
-            this.socket.off('connect');
+            this.socket.off('init');
             this.socket.off('success:get.rooms');
             this.socket.off('success:create.room');
             this.socket.off('success:delete.room');
@@ -90,8 +90,8 @@ module.exports = {
             var _this = this;
             let socket = this.socket;
 
-            socket.on('connect', function() {
-                console.log('socket connect');
+            socket.on('init', function() {
+                console.log('socket init');
                 socket.emit('get.rooms');
             });
 

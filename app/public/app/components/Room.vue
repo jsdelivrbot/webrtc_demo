@@ -6,10 +6,11 @@
         <div class="creator">
             <h3>{{roomInfo.creatorName}}</h3>
         </div>
+        <video ref="video" :src="videoSrc" autoplay=""></video>
         <el-button @click="openVideo">开启视频</el-button>
         <ul>
             <li class="c-member" v-for="member in members" @click="requestVideo($event)" :id="member.id">
-                <video :src="user.videoStreamSrc" autoplay="" id="camera_box"></video>
+                <video :src="member.videoStreamSrc" autoplay="" id="camera_box"></video>
                 <p class="member-name">name: {{member.userName}}</p>
             </li>
         </ul>
@@ -20,7 +21,6 @@
 import { mapGetters } from 'vuex';
 import _ from 'lodash';
 import io from 'socket.io-client';
-import $ from 'jquery';
 //import ss from 'socket.io-stream';
 
 module.exports = {
@@ -94,7 +94,7 @@ module.exports = {
             });
 
             socket.on('success:join.room', function(data) {
-                console.log('success:join.room');
+                console.log('success:join.room,', data);
                 if (data.user.id !== _this.userId) {
                     _this.addMember(data.user);
                 } else {
@@ -118,9 +118,55 @@ module.exports = {
                 //socket.emit('join.room', _this.roomId);
             });
 
+            var mediaSource = new window.MediaSource();
+            var videoElement = this.$refs.video;
+            var sourceBuffer;
+            var queue = [];
+            videoElement.src = window.URL.createObjectURL(mediaSource);
+            
+            mediaSource.addEventListener('sourceopen', function (e) {
+                //videoElement.play();
+                //console.log('mediaSource.readyState', mediaSource.readyState);
+                //window.URL.revokeObjectURL(videoElement.src);
+                sourceBuffer = e.target.addSourceBuffer('video/webm; codecs="vp8,vorbis"');
+                if (sourceBuffer.mode === 'segments') {
+                    sourceBuffer.mode = 'sequence';
+                }
+                sourceBuffer.addEventListener('updatestart', function () {
+                    console.log('sourceBuffer updatestart');
+                });
+                sourceBuffer.addEventListener('update', function () {
+                    console.log('sourceBuffer update');
+                    if (queue.length > 0 && !sourceBuffer.updating) {
+                        sourceBuffer.appendBuffer(queue.shift());
+                    }
+                });
+                sourceBuffer.addEventListener('updateend', function () {
+                    console.log('sourceBuffer updateend', mediaSource.readyState);
+                    //mediaSource.endOfStream();
+                    //videoElement.play();
+                });
+                sourceBuffer.addEventListener('error', function (e) {
+                    console.log('sourceBuffer error', mediaSource.readyState);
+                });
+            }, false);
+
+            mediaSource.addEventListener('sourceended', function(e) { console.log('sourceended: ' + mediaSource.readyState); });
+            mediaSource.addEventListener('sourceclose', function(e) { console.log('sourceclose: ' + mediaSource.readyState); });
+            mediaSource.addEventListener('error', function(e) { console.log('mediaSource error: ' + mediaSource.readyState); });
+            
             socket.on('open:video', function(data) {
-                var blob = new Blob([data.stream]);
-                _this.showVideo(data.userEmail, blob);
+                console.log('video stream event,', sourceBuffer.updating);
+                //var blob = new window.Blob([data.stream]);
+                if (sourceBuffer.updating || queue.length > 0) {
+                    console.log('queue push');
+                    queue.push(data.stream);
+                } else {
+                    console.log('appendBuffer');
+                    sourceBuffer.appendBuffer(data.stream);
+                }
+                //_this.videoSrc = window.URL.createObjectURL(blob);
+                //_this.showVideo(data.userEmail, blob);
             });
 
             socket.on('error', function() {
@@ -151,37 +197,43 @@ module.exports = {
                 return;
             }
             var src = (window.URL && window.URL.createObjectURL) ? window.URL.createObjectURL(stream) : stream;
-            this.users = this.users.map(function(user) {
-                return user.email === email ? _.extend({}, user, {videoStreamSrc: src}) : user;
+            this.members = this.members.map(function(member) {
+                return member.email === email ? _.extend({}, member, {videoStreamSrc: src}) : member;
             });
         },
         openVideo: function() {
             var _this = this;
+
             //视频连接
             var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
             getUserMedia = getUserMedia.bind(navigator);
             getUserMedia({
-                video: true,
-                audio: true
+                //audio: true,
+                video: true
             }, function(stream) {
-                _this.socket.emit('open:video', stream);
-                // var mediaRecorder = new MediaRecorder(stream);
-                // mediaRecorder.onstart = function(e) {
-                //     _this.chunks = [];
-                // };
-                // mediaRecorder.ondataavailable = function(e) {
-                //     _this.chunks.push(e.data);
-                // };
+                /*_this.selfvideosrc = (window.URL && window.URL.createObjectURL) ? window.URL.createObjectURL(stream) : stream;*/
+                var mediaRecorder = new window.MediaRecorder(stream);
+                mediaRecorder.onstart = function(e) {
+                    _this.chunks = [];
+                };
+                mediaRecorder.ondataavailable = function(e) {
+                    var blob = new window.Blob([e.data], {type: 'video/webm; codecs="vp8,vorbis"'});
+                    _this.socket.emit('video.open', blob);
+                    //console.log(e.data);
+                    //_this.chunks.push(e.data);
+                    //fileReader.readAsArrayBuffer(e.data);
+                };
                 // mediaRecorder.onstop = function(e) {
-                //     var blob = new Blob(_this.chunks);
-                //     _this.socket.emit('video', stream);
+                //     var blob = new window.Blob(_this.chunks, {type: 'video/webm; codecs="vp8,vorbis"'});
+                //     _this.socket.emit('video.open', blob);
                 // };
 
-                // mediaRecorder.start();
+                mediaRecorder.start(2000);
+
                 // // Stop recording after 5 seconds and broadcast it to server
                 // setTimeout(function() {
                 //     mediaRecorder.stop();
-                // }, 200);
+                // }, 2000);
             }, function(err) {
                 //failFn ? failFn(err) : null;
             });

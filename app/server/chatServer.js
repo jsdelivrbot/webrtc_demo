@@ -23,7 +23,7 @@ function start(server) {
         let session = socket.handshake.session;
         let user = session.user;
 
-        logger.trace('socket connection', user);
+        logger.trace('socket connection', user.email);
 
         if (!user) {
             logger.error('failed:auth');

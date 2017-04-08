@@ -19,7 +19,7 @@ class SocketClient {
         socket.on('get.roomInfo', this.getRoomInfo.bind(this));
         socket.on('get.rooms', this.getRooms.bind(this));
         socket.on('exit.room', this.exitRoom.bind(this));
-        socket.on('open:video', this.openVideo.bind(this));
+        socket.on('video.open', this.openVideo.bind(this));
 
         socket.on('disconnect', function() {
             logger.trace('disconnect:', socket.id);
@@ -33,14 +33,21 @@ class SocketClient {
         socket.emit('init');
     }
     openVideo(blob) {
+        logger.trace('openVideo');
         let user = this.user;
-        let socket = this.socket;
-        user.rooms.forEach(function(roomId) {
-            socket.to(roomId).emit('open:video', {
-                stream: blob,
-                userEmail: user.email
-            });
+        let io = this.io;
+        io.emit('open:video', {
+            stream: blob,
+            userEmail: user.email
         });
+        // logger.trace(user.rooms);
+        // user.rooms.forEach(function(roomId) {
+        //     logger.trace('roomId:', roomId);
+        //     io.to(roomId).emit('open:video', {
+        //         stream: blob,
+        //         userEmail: user.email
+        //     });
+        // });
     }
     createRoom(opts) {
         logger.trace('SocketClient::createRoom, info:', opts);
@@ -75,7 +82,7 @@ class SocketClient {
     }
     joinRoom(roomId) {
         logger.trace('SocketClient::joinRoom, roomId:', roomId);
-        //let io = this.io;
+        let io = this.io;
         let socket = this.socket;
         let user = this.user;
         socket.join(roomId, function(err) {
@@ -88,7 +95,7 @@ class SocketClient {
             RoomUtils.joinRoom(user, roomId).then(function(data) {
                 logger.trace('success:join.room');
                 //socket.emit('success:join.socketRoom', data.room);
-                socket.to(roomId).emit('success:join.room', data); //room and user
+                io.to(roomId).emit('success:join.room', data); //room and user
             }, function(data) {
                 logger.error('failed:join.room', data);
                 socket.emit('failed:join.room', {

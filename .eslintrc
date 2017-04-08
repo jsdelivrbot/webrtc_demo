@@ -17,8 +17,7 @@
         "__dirname": true, //node
         "console": true, //all
         "confirm": true,
-        "alert": true,
-        "Peer": true
+        "alert": true
     },
     "rules": {
         //官方文档 http://eslint.org/docs/rules/

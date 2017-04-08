@@ -64,6 +64,7 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, outDir),
+        publicPath: '/build/',
         filename: '[name]' + afterfix,
         sourceMapFilename: '[name].map'
     },

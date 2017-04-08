@@ -169,7 +169,7 @@ function exitRoom(user, roomId) {
                     return;
                 }
                 Room.findOneAndUpdate({_id: roomId}, {'$pull': {'members': mapUserInfo(_user, {type: 'basic'})}}, function(err, _room) {
-                    console.log('Room update:', _room);
+                    //console.log('Room update:', _room);
                     if (err) {
                         reject({errorMsg: 'join room failed'});
                         return;

@@ -6,7 +6,7 @@
         <div class="creator">
             <h3>{{roomInfo.creatorName}}</h3>
         </div>
-        <video ref="video" :src="videoSrc" autoplay=""></video>
+        <video ref="video" src="/upload/1492332439573.webm" autoplay=""></video>
         <el-button @click="openVideo">开启视频</el-button>
         <ul>
             <li class="c-member" v-for="member in members" @click="requestVideo($event)" :id="member.id">
@@ -21,6 +21,7 @@
 import { mapGetters } from 'vuex';
 import _ from 'lodash';
 import io from 'socket.io-client';
+import MediaStreamRecorder from 'msr';
 //import ss from 'socket.io-stream';
 
 module.exports = {
@@ -118,55 +119,63 @@ module.exports = {
                 //socket.emit('join.room', _this.roomId);
             });
 
-            var mediaSource = new window.MediaSource();
-            var videoElement = this.$refs.video;
-            var sourceBuffer;
-            var queue = [];
-            videoElement.src = window.URL.createObjectURL(mediaSource);
-            
-            mediaSource.addEventListener('sourceopen', function (e) {
-                //videoElement.play();
-                //console.log('mediaSource.readyState', mediaSource.readyState);
-                //window.URL.revokeObjectURL(videoElement.src);
-                sourceBuffer = e.target.addSourceBuffer('video/webm; codecs="vp8,vorbis"');
-                if (sourceBuffer.mode === 'segments') {
-                    sourceBuffer.mode = 'sequence';
-                }
-                sourceBuffer.addEventListener('updatestart', function () {
-                    console.log('sourceBuffer updatestart');
-                });
-                sourceBuffer.addEventListener('update', function () {
-                    console.log('sourceBuffer update');
-                    if (queue.length > 0 && !sourceBuffer.updating) {
-                        sourceBuffer.appendBuffer(queue.shift());
-                    }
-                });
-                sourceBuffer.addEventListener('updateend', function () {
-                    console.log('sourceBuffer updateend', mediaSource.readyState);
-                    //mediaSource.endOfStream();
-                    //videoElement.play();
-                });
-                sourceBuffer.addEventListener('error', function (e) {
-                    console.log('sourceBuffer error', mediaSource.readyState);
-                });
-            }, false);
+            // var mediaSource = new window.MediaSource();
+            // //var videoElement = this.$refs.video;
+            // var sourceBuffer;
+            // var queue = [];
+            // //videoElement.src = window.URL.createObjectURL(mediaSource);
+            // mediaSource.addEventListener('sourceopen', function (e) {
+            //     console.log('source open');
+            //     //videoElement.play();
+            //     //console.log('mediaSource.readyState', mediaSource.readyState);
+            //     //window.URL.revokeObjectURL(videoElement.src);
+            //     sourceBuffer = e.target.addSourceBuffer('video/webm; codecs="vp8,vorbis"');
+            //     if (sourceBuffer.mode === 'segments') {
+            //         sourceBuffer.mode = 'sequence';
+            //     }
+            //     sourceBuffer.addEventListener('updatestart', function () {
+            //         console.log('sourceBuffer updatestart');
+            //     });
+            //     sourceBuffer.addEventListener('update', function () {
+            //         console.log('sourceBuffer update');
+            //         if (queue.length > 0 && !sourceBuffer.updating) {
+            //             sourceBuffer.appendBuffer(queue.shift());
+            //         }
+            //     });
+            //     sourceBuffer.addEventListener('updateend', function () {
+            //         console.log('sourceBuffer updateend', mediaSource.readyState);
+            //         //mediaSource.endOfStream();
+            //         //videoElement.play();
+            //     });
+            //     sourceBuffer.addEventListener('error', function (e, b, c) {
+            //         console.log('sourceBuffer error', mediaSource.readyState);
+            //     });
+            // }, false);
 
-            mediaSource.addEventListener('sourceended', function(e) { console.log('sourceended: ' + mediaSource.readyState); });
-            mediaSource.addEventListener('sourceclose', function(e) { console.log('sourceclose: ' + mediaSource.readyState); });
-            mediaSource.addEventListener('error', function(e) { console.log('mediaSource error: ' + mediaSource.readyState); });
+            // mediaSource.addEventListener('sourceended', function(e) { console.log('sourceended: ' + mediaSource.readyState); });
+            // mediaSource.addEventListener('sourceclose', function(e) { console.log('sourceclose: ' + mediaSource.readyState); });
+            // mediaSource.addEventListener('error', function(e, b, c) {
+            //     console.log('mediaSource error: ' + mediaSource.readyState);
+            // });
             
             socket.on('open:video', function(data) {
-                console.log('video stream event,', sourceBuffer.updating);
-                //var blob = new window.Blob([data.stream]);
-                if (sourceBuffer.updating || queue.length > 0) {
-                    console.log('queue push');
-                    queue.push(data.stream);
-                } else {
-                    console.log('appendBuffer');
-                    sourceBuffer.appendBuffer(data.stream);
-                }
-                //_this.videoSrc = window.URL.createObjectURL(blob);
-                //_this.showVideo(data.userEmail, blob);
+                console.log('open:video');
+                // var blob = new window.Blob([data.stream]);
+                // _this.videoSrc = window.URL.createObjectURL(blob);
+                // _this.showVideo(data.userEmail, blob);
+                // if (sourceBuffer.updating || queue.length > 0) {
+                //     console.log('queue push');
+                //     queue.push(data.stream);
+                // } else {
+                //     console.log('appendBuffer');
+                //     try {
+                //         sourceBuffer.appendBuffer(data.stream);
+                //     } catch (e) {
+                //         console.log(e);
+                //     }
+                // }
+                //console.log('video stream event, sourceBuffer status:', sourceBuffer.updating, 'data:', data.stream);
+                //queue.push(data.stream);
             });
 
             socket.on('error', function() {
@@ -213,27 +222,33 @@ module.exports = {
             }, function(stream) {
                 /*_this.selfvideosrc = (window.URL && window.URL.createObjectURL) ? window.URL.createObjectURL(stream) : stream;*/
                 var mediaRecorder = new window.MediaRecorder(stream);
+                //mediaRecorder.mimeType = 'video/webm';
                 mediaRecorder.onstart = function(e) {
                     _this.chunks = [];
                 };
                 mediaRecorder.ondataavailable = function(e) {
-                    var blob = new window.Blob([e.data], {type: 'video/webm; codecs="vp8,vorbis"'});
-                    _this.socket.emit('video.open', blob);
+                    console.log('video.open');
+                    //var blob = new window.Blob([e.data], {type: 'video/webm; codecs="vp8,vorbis"'});
+                    //_this.socket.emit('video.open', blob);
                     //console.log(e.data);
                     //_this.chunks.push(e.data);
                     //fileReader.readAsArrayBuffer(e.data);
+                    var file = new File([e.data], 'msr-' + (new Date()).toISOString().replace(/:|\./g, '-') + '.webm', {
+                        type: 'video/webm'
+                    });
+                    _this.socket.emit('video.save', file);
                 };
                 // mediaRecorder.onstop = function(e) {
                 //     var blob = new window.Blob(_this.chunks, {type: 'video/webm; codecs="vp8,vorbis"'});
                 //     _this.socket.emit('video.open', blob);
                 // };
 
-                mediaRecorder.start(2000);
+                mediaRecorder.start(5000);
 
                 // // Stop recording after 5 seconds and broadcast it to server
                 // setTimeout(function() {
                 //     mediaRecorder.stop();
-                // }, 2000);
+                // }, 5000);
             }, function(err) {
                 //failFn ? failFn(err) : null;
             });

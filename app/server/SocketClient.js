@@ -1,6 +1,8 @@
 var RoomUtils = require('../utils/RoomUtils');
 var log4js = require('log4js');
 var logger = log4js.getLogger('room-socket');
+var fs = require('fs');
+var path = require('path');
 // var SocketStream = require('socket.io-stream');
 // var path = require('path');
 // var fs = require('fs');
@@ -20,6 +22,7 @@ class SocketClient {
         socket.on('get.rooms', this.getRooms.bind(this));
         socket.on('exit.room', this.exitRoom.bind(this));
         socket.on('video.open', this.openVideo.bind(this));
+        socket.on('video.save', this.saveVideo.bind(this));
 
         socket.on('disconnect', function() {
             logger.trace('disconnect:', socket.id);
@@ -31,6 +34,16 @@ class SocketClient {
         });
 
         socket.emit('init');
+    }
+    saveVideo(file) {
+        logger.trace('saveVideo');
+        fs.writeFile(path.resolve(__dirname, '../public/upload') + '/' + (new Date()).getTime() + '.webm', file, function(err) {
+            if (err) {
+                logger.error(err);
+            } else {
+                logger.trace('success');
+            }
+        });
     }
     openVideo(blob) {
         logger.trace('openVideo');
